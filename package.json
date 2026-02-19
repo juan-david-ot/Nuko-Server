@@ -1,11 +1,12 @@
 {
 	"name": "nuko-server",
 	"version": "0.0.0",
-	"main": "index.js",
 	"scripts": {
-		"dev": "tsx watch src/index.ts",
+		"dev": "tsx watch src/server.ts",
 		"pseudo:dev": "ts-node-dev src/index.ts",
-		"tsc": "tsc",
+		"build": "tsc",
+		"start": "node build/server.js",
+		"lint": "eslint .",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"type": "module",
