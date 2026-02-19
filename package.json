@@ -1,19 +1,26 @@
 {
-  "name": "nuko-server",
-  "version": "0.0.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "ts-node-dev src/index.ts",
-    "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "type": "commonjs",
-  "devDependencies": {
-    "@types/express": "5.0.6",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "5.9.3"
-  },
-  "dependencies": {
-    "express": "5.2.1"
-  }
+	"name": "nuko-server",
+	"version": "0.0.0",
+	"main": "index.js",
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"pseudo:dev": "ts-node-dev src/index.ts",
+		"tsc": "tsc",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"type": "module",
+	"devDependencies": {
+		"@eslint/js": "10.0.1",
+		"@types/express": "5.0.6",
+		"@types/node": "25.3.0",
+		"eslint": "10.0.0",
+		"globals": "17.3.0",
+		"ts-node-dev": "2.0.0",
+		"tsx": "4.21.0",
+		"typescript": "5.9.3",
+		"typescript-eslint": "8.56.0"
+	},
+	"dependencies": {
+		"express": "5.2.1"
+	}
 }
