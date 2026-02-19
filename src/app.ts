@@ -1,11 +1,10 @@
 import express from 'express'
+import routes from './routes'
+import config from './config'
 
 const app = express()
-app.use(express.json())
 
-app.get('/', (req, res) => {
-	console.log('Hello World!!')
-	res.send('Hello World!!')
-})
+config(app)
+routes(app)
 
 export default app

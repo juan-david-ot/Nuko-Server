@@ -1,7 +1,7 @@
 import app from './app'
 
-const PORT = 3000
+const PORT = 5005
 
 app.listen(PORT, () => {
-	console.log(`Server listening on http://0.0.0.0:${PORT}`)
+	console.log(`Server listening on http://localhost:${PORT}`)
 })
