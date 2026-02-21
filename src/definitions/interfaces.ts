@@ -1,3 +1,3 @@
 export interface TestInterface {
-	test: string
+    test: string
 }

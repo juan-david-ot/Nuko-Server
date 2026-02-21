@@ -1,3 +1,3 @@
 export enum TestEnum {
-	test = 'test'
+    test = 'test'
 }
