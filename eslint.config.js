@@ -28,7 +28,9 @@ export default defineConfig([
             'keyword-spacing': ['error', { before: true, after: true }],
             'space-before-blocks': ['error', 'always'],
             'eol-last': ['error', 'always'],
-            'no-trailing-spaces': 'error'
+            'no-trailing-spaces': 'error',
+            'indent': ['error', 4, { SwitchCase: 1 }],
+            'prefer-const': 'warn'
         }
     }
 ])
