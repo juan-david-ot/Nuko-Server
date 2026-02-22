@@ -58,4 +58,3 @@ export function validateUser(input: object): Promise<z.ZodSafeParseResult<User>>
 export function validatePartialUser(input: object): Promise<z.ZodSafeParseResult<PartialUser>> {
     return partialUserSchema.safeParseAsync(input)
 }
-
