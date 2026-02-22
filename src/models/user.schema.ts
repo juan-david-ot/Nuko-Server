@@ -1,6 +1,6 @@
 import z from 'zod'
 
-export const UserSchema = z.object({
+export const userSchema = z.object({
     id: z
         .uuid({
             error: (iss) => iss.input === undefined || iss.input === null ?
@@ -46,4 +46,16 @@ export const UserSchema = z.object({
         .min(6, 'Password must be at least 6 characters long')
 })
 
-export type User = z.infer<typeof UserSchema>
+const partialUserSchema = userSchema.partial()
+
+export type User = z.infer<typeof userSchema>
+export type PartialUser = z.infer<typeof partialUserSchema>
+
+export function validateUser(input: object): Promise<z.ZodSafeParseResult<User>> {
+    return userSchema.safeParseAsync(input)
+}
+
+export function validatePartialUser(input: object): Promise<z.ZodSafeParseResult<PartialUser>> {
+    return partialUserSchema.safeParseAsync(input)
+}
+

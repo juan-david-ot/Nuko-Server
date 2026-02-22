@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import crypto from 'node:crypto'
-import { User, UserSchema } from '../models/user.schema'
+import { User, validateUser } from '../models/user.schema'
 
 export async function test(req: Request, res: Response, next: NextFunction) {
 
-    const userData: User = { id: crypto.randomUUID(), name: '', nickname: 'test', email: 'test@example.com', password: 'password123' }
+    const userData: User = { id: crypto.randomUUID(), name: 'test', nickname: 'test', email: 'test@example.com', password: 'password123' }
 
-    const promise = UserSchema.safeParseAsync(userData)
+    const promise = validateUser(userData)
 
     console.log('Test!!')
 
