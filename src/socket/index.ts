@@ -1,24 +1,21 @@
 import { Server as IOServer, Socket } from 'socket.io'
 import type { Server as HTTPServer } from 'node:http'
+import chatSocket from './chat/chat.socket'
 
-export function initSocket(server: HTTPServer) {
+function initSocket(server: HTTPServer) {
     const io = new IOServer(server, {
         cors: {
-            origin: process.env.ORIGIN
+            origin: process.env.ORIGIN // Poner IP del ordenador para probar en dispositivos
         }
     })
 
     io.on('connection', (socket: Socket) => {
-        console.log('A NEW USER HAS CONNECTED')
+        console.log('A NEW USER HAS CONNECTED', socket.id)
 
-        socket.on('disconnect', () => {
-            console.log('a user has disconnected')
-        })
-
-        socket.on('chat message', (msg) => {
-            io.emit('chat message', msg)
-        })
+        chatSocket(io, socket)
     })
 
     return io
 }
+
+export default initSocket

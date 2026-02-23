@@ -1,6 +1,6 @@
 import { createServer } from 'node:http'
 import app from './app'
-import { initSocket } from './socket'
+import initSocket from './socket'
 
 const PORT = process.env.PORT || 2608
 
