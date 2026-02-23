@@ -27,6 +27,14 @@ export default defineConfig([
             'array-bracket-spacing': ['error', 'never'],
             'keyword-spacing': ['error', { before: true, after: true }],
             'space-before-blocks': ['error', 'always'],
+            'no-multiple-empty-lines': [
+                'error',
+                {
+                    max: 999,
+                    maxEOF: 0,
+                    maxBOF: 0
+                }
+            ],
             'eol-last': ['error', 'always'],
             'no-trailing-spaces': 'error',
             'indent': ['error', 4, { SwitchCase: 1 }],
