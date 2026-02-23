@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import crypto from 'node:crypto'
 import { User, validateUser } from '../schemas/user.schema'
+import { UserModel } from '../models/user.model'
 
 export class TestController {
     static async test(req: Request, res: Response, next: NextFunction) {
@@ -8,6 +9,9 @@ export class TestController {
         const userData: User = { id: crypto.randomUUID(), name: 'test', nickname: 'test', email: 'test@example.com', password: 'password123' }
 
         const promise = validateUser(userData)
+
+        const users = await UserModel.getUsers()
+        console.log('Users:', users)
 
         console.log('Test!!')
 
