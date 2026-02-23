@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import './db'
 import express from 'express'
 import errorHandling from './error-handling'
 import config from './config'

@@ -1,7 +1,7 @@
-import sql from '../db'
+import supabase from '../db'
 
 export class UserModel {
     static async getUsers() {
-        return await sql`SELECT * FROM users`
+        return await supabase.from('users').select()
     }
 }
