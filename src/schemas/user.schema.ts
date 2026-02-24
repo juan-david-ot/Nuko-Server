@@ -1,15 +1,16 @@
 import z from 'zod'
+import { PartialUser, User } from '../definitions/types'
 
 export const userSchema = z.object({
     id: z
         .uuid({
-            error: (iss) => iss.input === undefined || iss.input === null ?
+            error: (issue) => issue.input === undefined || issue.input === null ?
                 'ID is required' :
                 'ID must be a valid UUID'
         }),
     name: z
         .string({
-            error: (iss) => iss.input === undefined || iss.input === null ?
+            error: (issue) => issue.input === undefined || issue.input === null ?
                 'Name is required' :
                 'Name must be a string'
         })
@@ -17,14 +18,14 @@ export const userSchema = z.object({
         .trim(),
     nickname: z
         .string({
-            error: (iss) => iss.input === undefined || iss.input === null ?
+            error: (issue) => issue.input === undefined || issue.input === null ?
                 'Nickname is required' :
                 'Nickname must be a string'
         })
         .trim(),
     description: z
         .string({
-            error: (iss) => iss.input === undefined || iss.input === null ?
+            error: (issue) => issue.input === undefined || issue.input === null ?
                 'Description is required' :
                 'Description must be a string'
         })
@@ -32,24 +33,21 @@ export const userSchema = z.object({
         .optional(),
     email: z
         .email({
-            error: (iss) => iss.input === undefined || iss.input === null ?
+            error: (issue) => issue.input === undefined || issue.input === null ?
                 'Email is required' :
                 'Email must be a valid email address'
         })
         .trim(),
     password: z
         .string({
-            error: (iss) => iss.input === undefined || iss.input === null ?
+            error: (issue) => issue.input === undefined || issue.input === null ?
                 'Password is required' :
                 'Password must be a string'
         })
         .min(6, 'Password must be at least 6 characters long')
 })
 
-const partialUserSchema = userSchema.partial()
-
-export type User = z.infer<typeof userSchema>
-export type PartialUser = z.infer<typeof partialUserSchema>
+export const partialUserSchema = userSchema.partial()
 
 export function validateUser(input: object): Promise<z.ZodSafeParseResult<User>> {
     return userSchema.safeParseAsync(input)
