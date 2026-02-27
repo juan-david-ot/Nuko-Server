@@ -7,6 +7,11 @@ import { validateUser } from '../schemas/user.schema'
 export class TestController {
     static async test(req: Request, res: Response, next: NextFunction) {
 
+        const { user } = res.locals
+        if (!user) res.send('Access Denied')
+
+        console.log('user', user)
+
         const userData: User = { id: crypto.randomUUID(), name: 'test', nickname: 'test', email: 'test@example.com', password: 'password123' }
 
         const promise = validateUser(userData)
