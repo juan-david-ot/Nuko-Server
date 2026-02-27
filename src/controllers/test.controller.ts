@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import crypto from 'node:crypto'
-import { User, validateUser } from '../schemas/user.schema'
+import { User } from '../definitions/types'
 import { UserModel } from '../models/user.model'
+import { validateUser } from '../schemas/user.schema'
 
 export class TestController {
     static async test(req: Request, res: Response, next: NextFunction) {
