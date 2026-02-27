@@ -19,29 +19,29 @@ export default (app: Express) => {
     app.use(logger('dev'))
     app.use(cookieParser())
 
-    app.use((req: Request, res: Response, next) => {
-        const token = req.cookies.access_token
+    // app.use((req: Request, res: Response, next) => {
+    //     const token = req.cookies.access_token
 
-        // const token = jwt.sign(
-        //     { id: 1, username: 'JuanDa' },
-        //     TOKEN_SECRET,
-        //     { expiresIn: '6h' }
-        // )
+    //     // const token = jwt.sign(
+    //     //     { id: 1, username: 'JuanDa' },
+    //     //     TOKEN_SECRET,
+    //     //     { expiresIn: '6h' }
+    //     // )
 
-        res.locals = { user: null }
+    //     res.locals = { user: null }
 
-        try {
-            if (token) {
-                const data = jwt.verify(token, TOKEN_SECRET)
-                res.locals.user = data
-            }
-        }
-        catch (error) {
-            console.error(error)
-        }
+    //     try {
+    //         if (token) {
+    //             const data = jwt.verify(token, TOKEN_SECRET)
+    //             res.locals.user = data
+    //         }
+    //     }
+    //     catch (error) {
+    //         console.error(error)
+    //     }
 
-        next()
-    })
+    //     next()
+    // })
 
     app.use(express.json())
     app.use(express.urlencoded({ extended: false }))
