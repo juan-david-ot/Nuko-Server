@@ -1,9 +1,9 @@
 import express from 'express'
-import { TestController } from '../controllers/test.controller'
+import { test } from '../controllers/test.controller'
 import { verifyToken } from '../middlewares/auth.middleware'
 
 const router = express.Router()
 
-router.get('/', verifyToken, TestController.test)
+router.get('/', verifyToken, test)
 
 export default router

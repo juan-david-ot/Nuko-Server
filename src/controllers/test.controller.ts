@@ -4,36 +4,34 @@ import { User } from '../definitions/types'
 import { UserModel } from '../models/user.model'
 import { validateUser } from '../schemas/user.schema'
 
-export class TestController {
-    static async test(req: Request, res: Response, next: NextFunction) {
+export async function test(req: Request, res: Response, next: NextFunction) {
 
-        // const { user } = res.locals
-        // if (!user) res.send('Access Denied')
+    // const { user } = res.locals
+    // if (!user) res.send('Access Denied')
 
-        // console.log('user', user)
+    // console.log('user', user)
 
-        const userData: User = { id: crypto.randomUUID(), name: 'test', nickname: 'test', email: 'test@example.com', password: 'password123' }
+    const userData: User = { id: crypto.randomUUID(), name: 'test', nickname: 'test', email: 'test@example.com', password: 'password123' }
 
-        const promise = validateUser(userData)
+    const promise = validateUser(userData)
 
-        const users = await UserModel.getUsers()
-        console.log('Users:', users)
+    const users = await UserModel.getUsers()
+    console.log('Users:', users)
 
-        console.log('Test!!')
+    console.log('Test!!')
 
-        const response = await promise
+    const response = await promise
 
-        if (response.success) {
-            console.log('Validation successful:')
+    if (response.success) {
+        console.log('Validation successful:')
 
-            const newUser = response.data
+        const newUser = response.data
 
-            console.log('New User:', newUser)
-        }
-        else if (!response.success) {
-            return next(new Error('Validation failed')) // TODO: usar ZodError
-        }
-
-        return res.send('Test!!')
+        console.log('New User:', newUser)
     }
+    else if (!response.success) {
+        return next(new Error('Validation failed')) // TODO: usar ZodError
+    }
+
+    return res.send('Test!!')
 }
