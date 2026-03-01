@@ -6,15 +6,16 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET || ''
 export function verifyToken(req: Request, res: Response, next: NextFunction) {
     const token = req.cookies?.access_token
 
-    if (token) {
-        try {
-            const payload = jwt.verify(token, TOKEN_SECRET)
-            res.locals.user = payload
-            return next()
-        }
-        catch (error) {
-            return next(error)
-        }
+    if (!token) {
+        return next(new Error('Token required'))
     }
-    return next(new Error('Invalid token'))
+
+    try {
+        const payload = jwt.verify(token, TOKEN_SECRET)
+        res.locals.user = payload
+        return next()
+    }
+    catch {
+        return next(new Error('Invalid token'))
+    }
 }
