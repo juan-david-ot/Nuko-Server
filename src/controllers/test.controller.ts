@@ -31,8 +31,7 @@ export class TestController {
             console.log('New User:', newUser)
         }
         else if (!response.success) {
-            console.error('Validation failed:', response.error.issues.map(issue => issue.message))
-            return next(new Error('Validation failed'))
+            return next(new Error('Validation failed')) // TODO: usar ZodError
         }
 
         return res.send('Test!!')

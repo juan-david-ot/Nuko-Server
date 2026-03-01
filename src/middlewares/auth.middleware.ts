@@ -16,5 +16,5 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
             return next(error)
         }
     }
-    return res.status(401).json({ error: 'Invalid token' })
+    return next(new Error('Invalid token'))
 }

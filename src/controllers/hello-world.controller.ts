@@ -1,10 +1,10 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET || ''
 
 export class HelloWorldController {
-    static async helloWorld(req: Request, res: Response) {
+    static async helloWorld(req: Request, res: Response, next: NextFunction) {
         try {
             const user = { id: 10, username: 'Dixamo', avatar: '' }
             const token = jwt.sign(
@@ -12,6 +12,7 @@ export class HelloWorldController {
                 TOKEN_SECRET,
                 { expiresIn: '6h' }
             )
+            console.log('Hello World!!')
             return res
                 .cookie(
                     'access_token',
@@ -23,9 +24,7 @@ export class HelloWorldController {
                 .send({ user, token })
         }
         catch (error) {
-            res.status(401).send(error)
+            return next(error)
         }
-        console.log('Hello World!!')
-        return res.send('Hello World!!')
     }
 }
