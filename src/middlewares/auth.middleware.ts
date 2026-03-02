@@ -3,7 +3,6 @@ import { expressjwt } from 'express-jwt'
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET || ''
 
-
 export const verifyToken = expressjwt({
     secret: TOKEN_SECRET,
     algorithms: ['HS256'],
