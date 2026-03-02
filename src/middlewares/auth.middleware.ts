@@ -1,21 +1,20 @@
-import { NextFunction, Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
+import { Request } from 'express'
+import { expressjwt } from 'express-jwt'
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET || ''
 
-export function verifyToken(req: Request, res: Response, next: NextFunction) {
-    const token = req.cookies?.access_token
 
-    if (!token) {
-        return next(new Error('Token required'))
-    }
+export const verifyToken = expressjwt({
+    secret: TOKEN_SECRET,
+    algorithms: ['HS256'],
+    requestProperty: 'payload',
+    getToken: getTokenFromHeaders
+})
 
-    try {
-        const payload = jwt.verify(token, TOKEN_SECRET)
-        res.locals.user = payload
-        return next()
+function getTokenFromHeaders(req: Request): string | undefined {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        const token = req.headers.authorization.split(' ')[1]
+        return token
     }
-    catch {
-        return next(new Error('Invalid token'))
-    }
+    return undefined
 }
