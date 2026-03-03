@@ -3,7 +3,7 @@ import './db'
 import express from 'express'
 import errorHandler from './error-handler'
 import config from './config'
-import routes from './routes'
+import routes from './routers'
 
 const app = express()
 
