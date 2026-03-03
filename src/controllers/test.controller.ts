@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import crypto from 'node:crypto'
 import { User } from '../definitions/types'
-import { UserModel } from '../models/user.model'
+import UserModel from '../models/user.model'
 import { validateUser } from '../schemas/user.schema'
 
-export async function test(req: Request, res: Response, next: NextFunction) {
+async function test(req: Request, res: Response, next: NextFunction) {
 
     // const { user } = res.locals
     // if (!user) res.send('Access Denied')
@@ -34,4 +34,8 @@ export async function test(req: Request, res: Response, next: NextFunction) {
     }
 
     return res.send('Test!!')
+}
+
+export {
+    test
 }

@@ -1,4 +1,4 @@
-export class ChatService {
+class ChatService {
     static async handleMessage(message: { text: string }) {
         // guardar en supabase
         // validar
@@ -7,3 +7,5 @@ export class ChatService {
         }
     }
 }
+
+export default ChatService

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET || ''
 
-export async function helloWorld(req: Request, res: Response, next: NextFunction) {
+async function helloWorld(req: Request, res: Response, next: NextFunction) {
     try {
         const user = { id: 10, username: 'Dixamo', avatar: '' }
         const token = jwt.sign(
@@ -25,4 +25,8 @@ export async function helloWorld(req: Request, res: Response, next: NextFunction
     catch (error) {
         return next(error)
     }
+}
+
+export {
+    helloWorld
 }

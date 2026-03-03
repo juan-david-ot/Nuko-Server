@@ -3,7 +3,7 @@ import { expressjwt } from 'express-jwt'
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET || ''
 
-export const verifyToken = expressjwt({
+const verifyToken = expressjwt({
     secret: TOKEN_SECRET,
     algorithms: ['HS256'],
     requestProperty: 'payload',
@@ -16,4 +16,8 @@ function getTokenFromHeaders(req: Request): string | undefined {
         return token
     }
     return undefined
+}
+
+export {
+    verifyToken
 }
