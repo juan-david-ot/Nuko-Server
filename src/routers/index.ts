@@ -1,8 +1,8 @@
 import { Express } from 'express'
-import helloWorlRoutes from './hello-world.router'
-import testRoutes from './test.router'
+import helloWorlRouter from './hello-world.router'
+import testRouter from './test.router'
 
 export default (app: Express) => {
-    app.use('/', helloWorlRoutes)
-    app.use('/test', testRoutes)
+    app.use('/', helloWorlRouter)
+    app.use('/test', testRouter)
 }
