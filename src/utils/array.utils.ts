@@ -1,7 +1,12 @@
-export function arrayUtilFunction1(): void {
+function arrayUtilFunction1(): void {
     console.log('arrayUtilFunction1')
 }
 
-export function arrayUtilFunction2(): void {
+function arrayUtilFunction2(): void {
     console.log('arrayUtilFunction2')
+}
+
+export {
+    arrayUtilFunction1,
+    arrayUtilFunction2
 }
