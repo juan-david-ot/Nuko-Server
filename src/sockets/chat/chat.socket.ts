@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import ChatService from './chat.service'
+import { handleMessage } from './chat.service'
 
 function chatSocket(io: Server, socket: Socket) {
     socket.on('disconnect', () => {
@@ -9,7 +9,7 @@ function chatSocket(io: Server, socket: Socket) {
     socket.on('chat message', async (msg) => {
         try {
             console.log('Chat message:', msg)
-            const message = await ChatService.handleMessage({ text: msg })
+            const message = await handleMessage({ text: msg })
             io.emit('chat message', message.text)
         }
         catch (error) {

@@ -1,11 +1,11 @@
-class ChatService {
-    static async handleMessage(message: { text: string }) {
-        // guardar en supabase
-        // validar
-        return {
-            text: message.text
-        }
+async function handleMessage(message: { text: string }) {
+    // guardar en supabase
+    // validar
+    return {
+        text: message.text
     }
 }
 
-export default ChatService
+export {
+    handleMessage
+}
