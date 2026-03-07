@@ -7,7 +7,7 @@ class UserModel {
     }
 
     static async saveUser(newUser: User) {
-        return supabase.from('users').insert({ newUser }).select()
+        return supabase.from('users').insert(newUser).select()
     }
 }
 
