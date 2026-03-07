@@ -2,40 +2,18 @@ import z from 'zod'
 import { PartialUser, User } from '../definitions/types'
 
 const userSchema = z.object({
-    id: z
-        .uuid({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'ID is required' :
-                'ID must be a valid UUID'
-        }),
-    name: z
-        .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Name is required' :
-                'Name must be a string'
-        })
-        .min(2, 'Name must be at least 2 characters long')
-        .trim(),
-    nickname: z
-        .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Nickname is required' :
-                'Nickname must be a string'
-        })
-        .trim(),
-    description: z
-        .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Description is required' :
-                'Description must be a string'
-        })
-        .trim()
-        .optional(),
     email: z
         .email({
             error: (issue) => issue.input === undefined || issue.input === null ?
                 'Email is required' :
                 'Email must be a valid email address'
+        })
+        .trim(),
+    username: z
+        .string({
+            error: (issue) => issue.input === undefined || issue.input === null ?
+                'Username is required' :
+                'Username must be a string'
         })
         .trim(),
     password: z
@@ -44,16 +22,34 @@ const userSchema = z.object({
                 'Password is required' :
                 'Password must be a string'
         })
-        .min(6, 'Password must be at least 6 characters long')
+        .min(6, 'Password must be at least 6 characters long'),
+    name: z
+        .string({
+            error: (issue) => issue.input === undefined || issue.input === null ?
+                'Name is required' :
+                'Name must be a string'
+        })
+        .min(2, 'Name must be at least 2 characters long')
+        .trim()
+        .optional(),
+    surname: z
+        .string({
+            error: (issue) => issue.input === undefined || issue.input === null ?
+                'Name is required' :
+                'Name must be a string'
+        })
+        .min(2, 'Name must be at least 2 characters long')
+        .trim()
+        .optional()
 })
 
 const partialUserSchema = userSchema.partial()
 
-function validateUser(input: object): Promise<z.ZodSafeParseResult<User>> {
+async function validateUser(input: object): Promise<z.ZodSafeParseResult<User>> {
     return userSchema.safeParseAsync(input)
 }
 
-function validatePartialUser(input: object): Promise<z.ZodSafeParseResult<PartialUser>> {
+async function validatePartialUser(input: object): Promise<z.ZodSafeParseResult<PartialUser>> {
     return partialUserSchema.safeParseAsync(input)
 }
 
