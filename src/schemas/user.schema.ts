@@ -2,12 +2,16 @@ import z from 'zod'
 import { PartialUser, User } from '../definitions/types'
 
 const userSchema = z.object({
+    id: z
+        .uuid({ error: 'ID must be a valid UUID' })
+        .optional(),
     email: z
         .email({
             error: (issue) => issue.input === undefined || issue.input === null ?
                 'Email is required' :
                 'Email must be a valid email address'
         })
+        .toLowerCase()
         .trim(),
     username: z
         .string({
@@ -15,31 +19,30 @@ const userSchema = z.object({
                 'Username is required' :
                 'Username must be a string'
         })
-        .trim(),
+        .trim()
+        .min(3, 'Name must be at least 3 characters long')
+        .toLowerCase()
+        .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers and underscores'),
     password: z
         .string({
             error: (issue) => issue.input === undefined || issue.input === null ?
                 'Password is required' :
                 'Password must be a string'
         })
-        .min(6, 'Password must be at least 6 characters long'),
+        .min(8, 'Password must be at least 8 characters long'),
     name: z
         .string({
             error: (issue) => issue.input === undefined || issue.input === null ?
                 'Name is required' :
                 'Name must be a string'
         })
-        .min(2, 'Name must be at least 2 characters long')
         .trim()
+        .min(2, 'Name must be at least 2 characters long')
         .optional(),
     surname: z
-        .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Name is required' :
-                'Name must be a string'
-        })
-        .min(2, 'Name must be at least 2 characters long')
+        .string({ error: 'Surname must be a string' })
         .trim()
+        .min(2, 'Surname must be at least 2 characters long')
         .optional()
 })
 
