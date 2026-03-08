@@ -5,6 +5,12 @@ import { validatePartialUser, validateUser } from '../schemas/user.schema'
 import UserModel from '../models/user.model'
 import { HttpError } from '../error-handler'
 
+declare module 'express' {
+    interface Request {
+        payload?: undefined
+    }
+}
+
 async function signup(req: Request, res: Response, next: NextFunction) {
     const result = await validateUser(req.body)
 
@@ -68,7 +74,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
         return next(new HttpError(500, 'Internal Server Error'))
     }
 
-    const user = queryData[0]
+    const user = queryData?.[0]
 
     if (user && (await bcrypt.compare(password, user.password))) {
         const payload = { id: user.id, email: user.email, username: user.username }
@@ -85,7 +91,9 @@ async function login(req: Request, res: Response, next: NextFunction) {
 }
 
 async function verify(req: Request, res: Response, next: NextFunction) {
-    console.log('verify')
+    const authUser = req.payload
+
+    res.json({ authUser })
 }
 
 export {
