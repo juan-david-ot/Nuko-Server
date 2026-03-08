@@ -9,6 +9,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
     const result = await validateUser(req.body)
 
     if (!result.success) {
+        console.log(result.error)
         return next(new HttpError(400, result.error.issues[0]?.message))
     }
 
@@ -47,6 +48,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
     const result = await validatePartialUser(req.body)
 
     if (!result.success) {
+        console.log(result.error)
         return next(new HttpError(400, result.error.issues[0]?.message))
     }
 

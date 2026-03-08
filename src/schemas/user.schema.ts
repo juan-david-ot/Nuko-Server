@@ -20,8 +20,8 @@ const userSchema = z.object({
                 'Username must be a string'
         })
         .trim()
-        .min(3, 'Name must be at least 3 characters long')
         .toLowerCase()
+        .min(3, 'Name must be at least 3 characters long')
         .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers and underscores'),
     password: z
         .string({

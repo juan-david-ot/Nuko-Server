@@ -20,9 +20,7 @@ export default (app: Express) => {
         console.error(error)
 
         if (error instanceof HttpError) {
-            return res.status(error.statusCode).json({
-                error: error.message
-            })
+            return res.status(error.statusCode).json({ error: error.message })
         }
 
         return res.status(500).json({
