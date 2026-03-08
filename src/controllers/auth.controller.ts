@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
-import { validateUser } from '../schemas/user.schema'
+import jwt from 'jsonwebtoken'
+import { validatePartialUser, validateUser } from '../schemas/user.schema'
 import UserModel from '../models/user.model'
 import { HttpError } from '../error-handler'
 
@@ -43,7 +44,44 @@ async function signup(req: Request, res: Response, next: NextFunction) {
 }
 
 async function login(req: Request, res: Response, next: NextFunction) {
-    console.log('login')
+    const result = await validatePartialUser(req.body)
+
+    if (!result.success) {
+        return next(new HttpError(400, result.error.issues[0]?.message))
+    }
+
+    const { email, username, password } = result.data
+
+    if (!password || (!email && !username)) {
+        return next(new HttpError(401, 'Bad request'))
+    }
+
+    if (!result.data.password) {
+        return next(new HttpError(401, 'Invalid credentials'))
+    }
+
+    const queryParams = email ? { email } : { username }
+    const { data: queryData, error: queryError } = await UserModel.getUsers(queryParams)
+
+    if (queryError) {
+        console.log(queryError)
+        return next(new HttpError(500, 'Internal Server Error'))
+    }
+
+    const user = queryData[0]
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+        const payload = { id: user.id, email: user.email, username: user.username }
+        const authToken = jwt.sign(
+            payload,
+            process.env.TOKEN_SECRET as string,
+            { algorithm: 'HS256', expiresIn: '6h' }
+        )
+        return res.status(200).json({ authToken })
+    }
+    else {
+        return next(new HttpError(401, 'Invalid credentials'))
+    }
 }
 
 async function verify(req: Request, res: Response, next: NextFunction) {
