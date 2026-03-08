@@ -5,12 +5,6 @@ import { validatePartialUser, validateUser } from '../schemas/user.schema'
 import UserModel from '../models/user.model'
 import { HttpError } from '../error-handler'
 
-declare module 'express' {
-    interface Request {
-        payload?: undefined
-    }
-}
-
 async function signup(req: Request, res: Response, next: NextFunction) {
     const result = await validateUser(req.body)
 

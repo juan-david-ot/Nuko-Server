@@ -11,11 +11,11 @@ async function test(req: Request, res: Response, next: NextFunction) {
 
     // console.log('user', user)
 
-    const userData: User = { id: crypto.randomUUID(), name: 'test', nickname: 'test', email: 'test@example.com', password: 'password123' }
+    const userData: User = { id: crypto.randomUUID(), name: 'test', username: 'test', email: 'test@example.com', password: 'password123' }
 
     const promise = validateUser(userData)
 
-    const users = await UserModel.getUsers()
+    const users = await UserModel.getUsers({})
     console.log('Users:', users)
 
     console.log('Test!!')
