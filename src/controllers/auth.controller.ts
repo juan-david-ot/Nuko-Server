@@ -76,7 +76,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
         const payload = { id: user.id, email: user.email, username: user.username }
         const authToken = jwt.sign(
             payload,
-            process.env.TOKEN_SECRET as string,
+            String(process.env.TOKEN_SECRET),
             { algorithm: 'HS256', expiresIn: '6h' }
         )
         return res.status(200).json({ authToken })
