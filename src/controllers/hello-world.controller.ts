@@ -6,7 +6,7 @@ async function helloWorld(req: Request, res: Response, next: NextFunction) {
         const user = { id: 10, username: 'Dixamo', avatar: '' }
         const token = jwt.sign(
             { id: 10, username: 'Dixamo' },
-            process.env.TOKEN_SECRET as string,
+            String(process.env.TOKEN_SECRET),
             { expiresIn: '6h' }
         )
         console.log('Hello World!!')
