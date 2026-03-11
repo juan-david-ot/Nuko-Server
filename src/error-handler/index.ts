@@ -1,4 +1,5 @@
 import { Express, NextFunction, Request, Response } from 'express'
+import { UnauthorizedError } from 'express-jwt'
 
 export class HttpError extends Error {
     statusCode: number
@@ -16,8 +17,12 @@ export default (app: Express) => {
         return next(new HttpError(404, 'Route not found'))
     })
 
-    app.use((error: Error | HttpError, req: Request, res: Response, next: NextFunction) => {
+    app.use((error: Error | HttpError | UnauthorizedError, req: Request, res: Response, next: NextFunction) => {
         console.error(error)
+
+        if (error instanceof UnauthorizedError) {
+            return res.status(error.status).json({ error: error.code })
+        }
 
         if (error instanceof HttpError) {
             return res.status(error.statusCode).json({ error: error.message })
