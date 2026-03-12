@@ -2,17 +2,7 @@ import { Express, NextFunction, Request, Response } from 'express'
 import { UnauthorizedError } from 'express-jwt'
 import { PostgrestError } from '@supabase/supabase-js'
 import { ZodError } from 'zod'
-
-export class HttpError extends Error {
-    statusCode: number
-
-    constructor(statusCode: number, message: string | undefined) {
-        super(message)
-        this.statusCode = statusCode
-
-        Object.setPrototypeOf(this, HttpError.prototype)
-    }
-}
+import { HttpError } from './http.error'
 
 export default (app: Express) => {
     app.use((req: Request, res: Response, next: NextFunction) => {

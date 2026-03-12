@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { validatePartialUser, validateUser } from '../schemas/user.schema'
 import * as UserModel from '../models/user.model'
-import { HttpError } from '../error-handler'
+import { HttpError } from '../error-handler/http.error'
 
 async function signup(req: Request, res: Response, next: NextFunction) {
     const result = await validateUser(req.body)
