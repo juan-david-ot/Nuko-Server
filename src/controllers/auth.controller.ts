@@ -21,8 +21,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
     ] = await Promise.all([emailQuery, usernameQuery])
 
     if (emailQueryError || usernameQueryError) {
-        console.log(emailQueryError || usernameQueryError)
-        return next(new HttpError(500, 'Internal Server Error'))
+        return next(emailQueryError || usernameQueryError)
     }
 
     if (emailQueryData?.length > 0 || usernameQueryData?.length > 0) {
@@ -36,8 +35,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
     const { data: newUserData, error: newUserError } = await UserModel.saveUser(newUser)
 
     if (newUserError) {
-        console.log(newUserError)
-        return next(new HttpError(500, 'Internal Server Error'))
+        return next(newUserError)
     }
 
     return res.status(201).json(newUserData)
@@ -47,8 +45,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
     const result = await partialUserSchema.safeParseAsync(req.body)
 
     if (!result.success) {
-        console.log(result.error)
-        return next(new HttpError(400, result.error.issues[0]?.message))
+        return next(result.error)
     }
 
     const { email, username, password } = result.data
@@ -65,8 +62,7 @@ async function login(req: Request, res: Response, next: NextFunction) {
     const { data: queryData, error: queryError } = await UserModel.getUsers(queryParams)
 
     if (queryError) {
-        console.log(queryError)
-        return next(new HttpError(500, 'Internal Server Error'))
+        return next(queryError)
     }
 
     const user = queryData?.[0]
