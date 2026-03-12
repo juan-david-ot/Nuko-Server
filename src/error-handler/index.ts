@@ -18,7 +18,7 @@ export default (app: Express) => {
         return next(new HttpError(404, 'Route not found'))
     })
 
-    app.use((error: Error | HttpError | UnauthorizedError, req: Request, res: Response, next: NextFunction) => {
+    app.use((error: Error | HttpError | UnauthorizedError | ZodError, req: Request, res: Response, next: NextFunction) => {
         console.error(error)
 
         if (error instanceof UnauthorizedError) {
