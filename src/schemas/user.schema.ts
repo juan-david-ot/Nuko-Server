@@ -1,5 +1,4 @@
 import z from 'zod'
-import { PartialUser, User } from '../definitions/types'
 
 const userSchema = z.object({
     id: z
@@ -48,17 +47,7 @@ const userSchema = z.object({
 
 const partialUserSchema = userSchema.partial()
 
-async function validateUser(input: object): Promise<z.ZodSafeParseResult<User>> {
-    return userSchema.safeParseAsync(input)
-}
-
-async function validatePartialUser(input: object): Promise<z.ZodSafeParseResult<PartialUser>> {
-    return partialUserSchema.safeParseAsync(input)
-}
-
 export {
     userSchema,
-    partialUserSchema,
-    validateUser,
-    validatePartialUser
+    partialUserSchema
 }

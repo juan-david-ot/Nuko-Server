@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { validatePartialUser, validateUser } from '../schemas/user.schema'
+import { partialUserSchema, userSchema } from '../schemas/user.schema'
 import * as UserModel from '../models/user.model'
 import { HttpError } from '../error-handler/http.error'
 
 async function signup(req: Request, res: Response, next: NextFunction) {
-    const result = await validateUser(req.body)
+    const result = await userSchema.safeParseAsync(req.body)
 
     if (!result.success) {
         return next(result.error)
@@ -44,7 +44,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
 }
 
 async function login(req: Request, res: Response, next: NextFunction) {
-    const result = await validatePartialUser(req.body)
+    const result = await partialUserSchema.safeParseAsync(req.body)
 
     if (!result.success) {
         console.log(result.error)
