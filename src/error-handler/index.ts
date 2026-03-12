@@ -1,5 +1,6 @@
 import { Express, NextFunction, Request, Response } from 'express'
 import { UnauthorizedError } from 'express-jwt'
+import { ZodError } from 'zod'
 
 export class HttpError extends Error {
     statusCode: number
@@ -22,6 +23,10 @@ export default (app: Express) => {
 
         if (error instanceof UnauthorizedError) {
             return res.status(error.status).json({ error: error.code })
+        }
+
+        if (error instanceof ZodError) {
+            return res.status(400).json({ error: error.issues.map(issue => issue.message) })
         }
 
         if (error instanceof HttpError) {
