@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { validatePartialUser, validateUser } from '../schemas/user.schema'
-import UserModel from '../models/user.model'
+import * as UserModel from '../models/user.model'
 import { HttpError } from '../error-handler'
 
 async function signup(req: Request, res: Response, next: NextFunction) {
