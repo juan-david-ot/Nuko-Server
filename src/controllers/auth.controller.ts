@@ -32,7 +32,7 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
     const hashedPassword = bcrypt.hash(result.data.password, await salt)
     const newUser = { ...result.data, password: await hashedPassword }
 
-    const { data: newUserData, error: newUserError } = await UserModel.saveUser(newUser)
+    const { data: newUserData, error: newUserError } = await UserModel.saveUser({ ...newUser, password: '' })
 
     if (newUserError) {
         return next(newUserError)

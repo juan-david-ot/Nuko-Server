@@ -30,18 +30,12 @@ const userSchema = z.object({
         })
         .min(8, 'Password must be at least 8 characters long'),
     name: z
-        .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Name is required' :
-                'Name must be a string'
-        })
+        .string({ error: 'Name must be a string' })
         .trim()
-        .min(2, 'Name must be at least 2 characters long')
         .optional(),
     surname: z
         .string({ error: 'Surname must be a string' })
         .trim()
-        .min(2, 'Surname must be at least 2 characters long')
         .optional()
 })
 
