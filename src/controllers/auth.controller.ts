@@ -5,7 +5,7 @@ import { partialUserSchema, userSchema } from '../schemas/user.schema'
 import * as UserModel from '../models/user.model'
 import { HttpError } from '../error-handler/http.error'
 
-async function signup(req: Request, res: Response, next: NextFunction) {
+async function signUp(req: Request, res: Response, next: NextFunction) {
     const result = await userSchema.safeParseAsync(req.body)
 
     if (!result.success) {
@@ -41,7 +41,7 @@ async function signup(req: Request, res: Response, next: NextFunction) {
     return res.status(201).json(newUserData)
 }
 
-async function login(req: Request, res: Response, next: NextFunction) {
+async function logIn(req: Request, res: Response, next: NextFunction) {
     const result = await partialUserSchema.safeParseAsync(req.body)
 
     if (!result.success) {
@@ -88,7 +88,7 @@ async function verify(req: Request, res: Response, next: NextFunction) {
 }
 
 export {
-    signup,
-    login,
+    signUp,
+    logIn,
     verify
 }

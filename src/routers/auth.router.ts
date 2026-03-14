@@ -1,12 +1,12 @@
 import express from 'express'
 import { verifyToken } from '../middlewares/auth.middleware'
-import { login, signup, verify } from '../controllers/auth.controller'
+import { logIn, signUp, verify } from '../controllers/auth.controller'
 
 const router = express.Router()
 
-router.post('/signup', signup)
+router.post('/signUp', signUp)
 
-router.post('/login', login)
+router.post('/logIn', logIn)
 
 router.get('/verify', verifyToken, verify)
 
