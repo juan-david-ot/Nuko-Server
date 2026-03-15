@@ -32,13 +32,13 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
     const hashedPassword = bcrypt.hash(result.data.password, await salt)
     const newUser = { ...result.data, password: await hashedPassword }
 
-    const { data: newUserData, error: newUserError } = await UserModel.saveUser({ ...newUser, password: '' })
+    const { data: newUserData, error: newUserError } = await UserModel.saveUser(newUser)
 
     if (newUserError) {
         return next(newUserError)
     }
 
-    return res.status(201).json(newUserData)
+    return res.status(201).json({ ...newUserData[0], password: undefined })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction) {
@@ -81,7 +81,7 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-async function verify(req: Request, res: Response, next: NextFunction) {
+async function verify(req: Request, res: Response) {
     const authUser = req.payload
 
     res.status(200).json({ authUser })
