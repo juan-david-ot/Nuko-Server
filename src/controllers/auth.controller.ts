@@ -72,7 +72,7 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
         const authToken = jwt.sign(
             payload,
             String(process.env.TOKEN_SECRET),
-            { algorithm: 'HS256', expiresIn: '6h' }
+            { algorithm: 'HS256', expiresIn: '4h' }
         )
         return res.status(200).json({ authToken })
     }
