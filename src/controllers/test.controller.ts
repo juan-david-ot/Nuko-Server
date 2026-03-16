@@ -15,7 +15,7 @@ async function test(req: Request, res: Response, next: NextFunction) {
 
     const promise = userSchema.safeParseAsync(userData)
 
-    const users = await UserModel.getUsers({})
+    const users = await UserModel.getUser({ username: 'test' })
     console.log('Users:', users)
 
     console.log('Test!!')
@@ -33,7 +33,7 @@ async function test(req: Request, res: Response, next: NextFunction) {
         return next(new Error('Validation failed')) // TODO: usar ZodError
     }
 
-    return res.send('Test!!')
+    return res.status(200).json(users)
 }
 
 export {
