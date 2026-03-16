@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { partialUserSchema, userSchema } from '../schemas/user.schema'
 import * as UserModel from '../models/user.model'
+import { partialUserSchema, userSchema } from '../schemas/user.schema'
 import { HttpError } from '../error-handler/http.error'
 
 async function signUp(req: Request, res: Response, next: NextFunction) {
@@ -12,19 +12,19 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
         return next(result.error)
     }
 
-    const emailQuery = UserModel.getUsers({ email: result.data.email })
-    const usernameQuery = UserModel.getUsers({ username: result.data.username })
+    const emailQuery = UserModel.getUser({ email: result.data.email })
+    const usernameQuery = UserModel.getUser({ username: result.data.username })
 
     const [
         { data: emailQueryData, error: emailQueryError },
         { data: usernameQueryData, error: usernameQueryError }
     ] = await Promise.all([emailQuery, usernameQuery])
 
-    if (emailQueryError || usernameQueryError) {
+    if ((emailQueryError && emailQueryError.code !== 'PGRST116') || (usernameQueryError && usernameQueryError.code !== 'PGRST116')) {
         return next(emailQueryError || usernameQueryError)
     }
 
-    if (emailQueryData?.length > 0 || usernameQueryData?.length > 0) {
+    if (emailQueryData || usernameQueryData) {
         return next(new HttpError(400, 'Email or username already exist'))
     }
 
@@ -38,7 +38,7 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
         return next(newUserError)
     }
 
-    return res.status(201).json({ ...newUserData[0], password: undefined })
+    return res.status(201).json({ ...newUserData, password: undefined })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction) {
@@ -59,13 +59,12 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
     }
 
     const queryParams = email ? { email } : { username }
-    const { data: queryData, error: queryError } = await UserModel.getUsers(queryParams)
+    const { data: user, error: queryError } = await UserModel.getUser(queryParams)
 
-    if (queryError) {
+    if (queryError && queryError.code !== 'PGRST116') {
+        console.log('aqui falla')
         return next(queryError)
     }
-
-    const user = queryData?.[0]
 
     if (user && (await bcrypt.compare(password, user.password))) {
         const payload = { id: user.id, email: user.email, username: user.username }
