@@ -9,7 +9,7 @@ async function saveCore(newCore: Core) {
     return supabase.from('cores').insert(newCore).select()
 }
 
-export {
+export default {
     getCores,
     saveCore
 }

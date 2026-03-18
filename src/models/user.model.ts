@@ -45,7 +45,7 @@ async function saveUser(newUser: User) {
     return supabase.from('users').insert(newUser).select().limit(1).single()
 }
 
-export {
+export default {
     getUser,
     getUsers,
     saveUser
