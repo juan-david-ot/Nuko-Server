@@ -6,17 +6,17 @@ const userSchema = z.object({
         .optional(),
     email: z
         .email({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Email is required' :
-                'Email must be a valid email address'
+            error: (issue) => issue.input === undefined || issue.input === null
+                ? 'Email is required'
+                : 'Email must be a valid email address'
         })
         .toLowerCase()
         .trim(),
     username: z
         .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Username is required' :
-                'Username must be a string'
+            error: (issue) => issue.input === undefined || issue.input === null
+                ? 'Username is required'
+                : 'Username must be a string'
         })
         .trim()
         .toLowerCase()
@@ -24,9 +24,9 @@ const userSchema = z.object({
         .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers and underscores'),
     password: z
         .string({
-            error: (issue) => issue.input === undefined || issue.input === null ?
-                'Password is required' :
-                'Password must be a string'
+            error: (issue) => issue.input === undefined || issue.input === null
+                ? 'Password is required'
+                : 'Password must be a string'
         })
         .min(8, 'Password must be at least 8 characters long'),
     name: z
