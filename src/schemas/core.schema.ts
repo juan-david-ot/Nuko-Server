@@ -7,7 +7,10 @@ const coreSchema = z.object({
     name: z
         .string({ error: 'Name must be a string' })
         .trim(),
-    creatorId: z.uuid({ error: 'ID must be a valid UUID' })
+    creatorId: z.uuid({ error: 'ID must be a valid UUID' }),
+    createdAt: z
+        .date()
+        .optional()
 })
 
 const partialCoreSchema = coreSchema.partial()
