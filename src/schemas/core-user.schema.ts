@@ -3,11 +3,10 @@ import z from 'zod'
 const coreUserSchema = z.object({
     coreId: z.uuid({ error: 'ID must be a valid UUID' }),
     userId: z.uuid({ error: 'ID must be a valid UUID' }),
-    role: z
-        .string({ error: 'Surname must be a string' })
-        .trim()
-        .toLowerCase()
-        .default('member')
+    role: z.uuid({ error: 'ID must be a valid UUID' }),
+    createdAt: z
+        .date()
+        .optional()
 })
 
 const partialCoreUserSchema = coreUserSchema.partial()
