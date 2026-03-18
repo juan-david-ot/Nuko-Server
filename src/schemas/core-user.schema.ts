@@ -4,7 +4,7 @@ const coreUserSchema = z.object({
     coreId: z.uuid({ error: 'ID must be a valid UUID' }),
     userId: z.uuid({ error: 'ID must be a valid UUID' }),
     role: z.uuid({ error: 'ID must be a valid UUID' }),
-    createdAt: z
+    joinedAt: z
         .date()
         .optional()
 })
