@@ -36,6 +36,9 @@ const userSchema = z.object({
     surname: z
         .string({ error: 'Surname must be a string' })
         .trim()
+        .optional(),
+    createdAt: z
+        .date()
         .optional()
 })
 
