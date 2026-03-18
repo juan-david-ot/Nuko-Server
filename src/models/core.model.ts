@@ -1,15 +1,40 @@
 import supabase from '../db'
-import { Core } from '../definitions/types'
+import { Core, PartialCore } from '../definitions/types'
 
-async function getCores() {
-    return supabase.from('cores').select()
+async function getCore(searchCore: PartialCore) {
+    let query = supabase.from('cores').select()
+    if (searchCore.id) {
+        query = query.eq('id', searchCore.id)
+    }
+    if (searchCore.name) {
+        query = query.eq('name', searchCore.name)
+    }
+    if (searchCore.creatorId) {
+        query = query.eq('creator_id', searchCore.creatorId)
+    }
+    return query.limit(1).single()
+}
+
+async function getCores(searchCore: PartialCore) {
+    let query = supabase.from('cores').select()
+    if (searchCore.id) {
+        query = query.eq('id', searchCore.id)
+    }
+    if (searchCore.name) {
+        query = query.eq('name', searchCore.name)
+    }
+    if (searchCore.creatorId) {
+        query = query.eq('creator_id', searchCore.creatorId)
+    }
+    return query
 }
 
 async function saveCore(newCore: Core) {
-    return supabase.from('cores').insert(newCore).select()
+    return supabase.from('cores').insert({ name: newCore.name, creator_id: newCore.creatorId }).select().limit(1).single()
 }
 
 export default {
+    getCore,
     getCores,
     saveCore
 }
