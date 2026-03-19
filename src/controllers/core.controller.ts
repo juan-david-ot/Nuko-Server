@@ -23,7 +23,7 @@ async function createCore(req: Request, res: Response, next: NextFunction) {
         return next(newCoreUserError)
     }
 
-    return res.status(201).json(newCoreData)
+    return res.status(201).json({ newCoreData, newCoreUserData })
 }
 
 export {
