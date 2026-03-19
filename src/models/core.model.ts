@@ -1,3 +1,4 @@
+import { UUID } from 'node:crypto'
 import supabase from '../db'
 import { Core, PartialCore } from '../definitions/types'
 
@@ -33,8 +34,13 @@ async function saveCore(newCore: Core) {
     return supabase.from('cores').insert({ name: newCore.name, creator_id: newCore.creatorId }).select().limit(1).single()
 }
 
+async function addUserToCore(coreId: UUID, userId: UUID) {
+    return supabase.from('cores_users').insert({ core_id: coreId, user_id: userId }).select().limit(1).single()
+}
+
 export default {
     getCore,
     getCores,
-    saveCore
+    saveCore,
+    addUserToCore
 }
