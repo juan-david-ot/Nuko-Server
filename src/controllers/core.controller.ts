@@ -17,7 +17,12 @@ async function createCore(req: Request, res: Response, next: NextFunction) {
         return next(newCoreError)
     }
 
-    console.log(newCore)
+    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(newCoreData.id, req.payload.id)
+
+    if (newCoreUserError) {
+        return next(newCoreUserError)
+    }
+
     return res.status(201).json(newCoreData)
 }
 
