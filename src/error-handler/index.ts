@@ -12,6 +12,10 @@ export default (app: Express) => {
     app.use((error: Error | HttpError | UnauthorizedError | ZodError | PostgrestError, req: Request, res: Response, next: NextFunction) => {
         console.error(error)
 
+        if (res.headersSent) {
+            return next(error)
+        }
+
         if (error instanceof UnauthorizedError) {
             return res.status(error.status).json({ error: error.code })
         }
