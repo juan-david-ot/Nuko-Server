@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { handleMessage } from './chat.service'
 
-function chatSocket(io: Server, socket: Socket) {
+function chatSocket(io: Server, socket: Socket): void {
     socket.on('disconnect', () => {
         console.log('a user has disconnected', socket.id)
     })

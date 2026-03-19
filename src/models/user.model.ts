@@ -1,7 +1,8 @@
+import { PostgrestSingleResponse } from '@supabase/supabase-js'
 import supabase from '../db'
 import { PartialUser, User } from '../definitions/types'
 
-async function getUser(searchUser: PartialUser) {
+async function getUser(searchUser: PartialUser): Promise<PostgrestSingleResponse<User>> {
     let query = supabase.from('users').select()
     if (searchUser.id) {
         query = query.eq('id', searchUser.id)
@@ -21,7 +22,7 @@ async function getUser(searchUser: PartialUser) {
     return query.limit(1).single()
 }
 
-async function getUsers(searchUser: PartialUser) {
+async function getUsers(searchUser: PartialUser): Promise<PostgrestSingleResponse<User[]>> {
     let query = supabase.from('users').select()
     if (searchUser.id) {
         query = query.eq('id', searchUser.id)
@@ -41,7 +42,7 @@ async function getUsers(searchUser: PartialUser) {
     return query
 }
 
-async function saveUser(newUser: User) {
+async function saveUser(newUser: User): Promise<PostgrestSingleResponse<User>> {
     return supabase.from('users').insert(newUser).select().limit(1).single()
 }
 

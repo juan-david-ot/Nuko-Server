@@ -2,7 +2,7 @@ import { Server as IOServer, Socket } from 'socket.io'
 import type { Server as HTTPServer } from 'node:http'
 import chatSocket from './chat/chat.socket'
 
-function initSocket(server: HTTPServer) {
+function initSocket(server: HTTPServer): IOServer {
     const io = new IOServer(server, {
         cors: {
             origin: process.env.ORIGIN || 'http://localhost:2409' // Poner IP del ordenador para probar en dispositivos
