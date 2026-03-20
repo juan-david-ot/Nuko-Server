@@ -6,7 +6,8 @@ const coreSchema = z.object({
         .optional(),
     name: z
         .string({ error: 'Name must be a string' })
-        .trim(),
+        .trim()
+        .min(3, 'Core name must be at least 3 characters long'),
     creatorId: z.uuid({ error: 'ID must be a valid UUID' }),
     createdAt: z
         .date()
