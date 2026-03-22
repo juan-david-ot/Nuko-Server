@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 import { coreSchema } from '../schemas/core.schema'
 import CoreModel from '../models/core.model'
 
@@ -38,7 +39,25 @@ async function createCore(req: Request, res: Response, next: NextFunction) {
     return res.status(201).json({ newCoreData, newCoreUserData })
 }
 
+async function createInvitationToCore(req: Request, res: Response, next: NextFunction) {
+    const { id: hostId, email, username } = req.payload
+    const { coreId } = req.body
+    console.log(hostId, email, username, coreId)
+
+    const payload = { hostId, coreId }
+
+    const inviteToken = jwt.sign(
+        payload,
+        String(process.env.TOKEN_SECRET),
+        { algorithm: 'HS256', expiresIn: '12h' }
+    )
+    const inviteLink = `${process.env.ORIGIN}/invite/${inviteToken}`
+
+    return res.status(201).json({ inviteLink })
+}
+
 export {
     getUserCores,
-    createCore
+    createCore,
+    createInvitationToCore
 }
