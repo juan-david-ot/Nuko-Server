@@ -12,7 +12,6 @@ async function getUserCores(req: Request, res: Response, next: NextFunction) {
     }
 
     const cores = coresData.map((item: any) => item.cores)
-    console.log(coresData)
 
     return res.status(200).json(cores)
 }
@@ -42,7 +41,7 @@ async function createCore(req: Request, res: Response, next: NextFunction) {
 }
 
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction) {
-    const { id: hostId, email, username } = req.payload
+    const { id: hostId } = req.payload
     const { id: coreId } = req.params
 
     const { data: coresData, error: coresError } = await CoreModel.getCoresByUserId(req.payload.id)
@@ -54,8 +53,6 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     if (!coresData.some((item: any) => item.cores.id === coreId)) {
         return next(new HttpError(401, 'Unauthorized'))
     }
-
-    console.log(hostId, email, username, coreId)
 
     const payload = { hostId, coreId }
 
