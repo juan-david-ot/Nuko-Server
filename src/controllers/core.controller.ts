@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { coreSchema } from '../schemas/core.schema'
 import CoreModel from '../models/core.model'
+import { HttpError } from '../error-handler/http.error'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction) {
     const { data: coresData, error: coresError } = await CoreModel.getCoresByUserId(req.payload.id)
@@ -11,6 +12,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction) {
     }
 
     const cores = coresData.map(item => item.cores)
+    console.log(coresData)
 
     return res.status(200).json(cores)
 }
@@ -41,7 +43,18 @@ async function createCore(req: Request, res: Response, next: NextFunction) {
 
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction) {
     const { id: hostId, email, username } = req.payload
-    const { coreId } = req.body
+    const { id: coreId } = req.params
+
+    const { data: coresData, error: coresError } = await CoreModel.getCoresByUserId(req.payload.id)
+
+    if (coresError) {
+        return next(coresError)
+    }
+
+    if (!coresData.some(item => item.cores.id === coreId)) {
+        return next(new HttpError(401, 'Unauthorized'))
+    }
+
     console.log(hostId, email, username, coreId)
 
     const payload = { hostId, coreId }

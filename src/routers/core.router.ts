@@ -8,6 +8,6 @@ router.get('/', verifyToken, getUserCores)
 
 router.post('/', verifyToken, createCore)
 
-router.post('/invitations', verifyToken, createInvitationToCore)
+router.post('/:id/invitation', verifyToken, createInvitationToCore)
 
 export default router
