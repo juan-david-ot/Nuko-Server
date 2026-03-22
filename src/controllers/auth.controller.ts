@@ -62,7 +62,6 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
     const { data: user, error: queryError } = await UserModel.getUser(queryParams)
 
     if (queryError && queryError.code !== 'PGRST116') {
-        console.log('aqui falla')
         return next(queryError)
     }
 
