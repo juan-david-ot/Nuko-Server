@@ -11,7 +11,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction) {
         return next(coresError)
     }
 
-    const cores = coresData.map(item => item.cores)
+    const cores = coresData.map((item: any) => item.cores)
     console.log(coresData)
 
     return res.status(200).json(cores)
@@ -51,7 +51,7 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
         return next(coresError)
     }
 
-    if (!coresData.some(item => item.cores.id === coreId)) {
+    if (!coresData.some((item: any) => item.cores.id === coreId)) {
         return next(new HttpError(401, 'Unauthorized'))
     }
 
