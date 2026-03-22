@@ -66,8 +66,29 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     return res.status(201).json({ inviteLink })
 }
 
+async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction) {
+    const { id: guestId } = req.payload
+    const { token: invitationToken } = req.params
+    const verified: any = jwt.verify(String(invitationToken), String(process.env.TOKEN_SECRET))
+
+    const { data: coreData, error: coreError } = await CoreModel.getCore({ id: verified.coreId })
+
+    if (coreError) {
+        return next(coreError)
+    }
+
+    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(coreData.id, guestId)
+
+    if (newCoreUserError) {
+        return next(newCoreUserError)
+    }
+
+    return res.status(201).json({ coreData, newCoreUserData })
+}
+
 export {
     getUserCores,
     createCore,
-    createInvitationToCore
+    createInvitationToCore,
+    acceptInvitationToCore
 }
