@@ -69,13 +69,13 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
 async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction) {
     const { id: guestId } = req.payload
     const { token: invitationToken } = req.params
-    const decoded: any = jwt.verify(String(invitationToken), String(process.env.TOKEN_SECRET), (error, verified) => ({ error, verified }))
+    const verified: any = jwt.verify(String(invitationToken), String(process.env.TOKEN_SECRET), (error, decoded) => ({ error, decoded }))
 
-    if (decoded.error) {
+    if (verified.error) {
         return next(new HttpError(401, 'Invitacion caducada o invalida'))
     }
 
-    const { data: coreData, error: coreError } = await CoreModel.getCore({ id: decoded.verified.coreId })
+    const { data: coreData, error: coreError } = await CoreModel.getCore({ id: verified.decoded.coreId })
 
     if (coreError) {
         return next(coreError)
