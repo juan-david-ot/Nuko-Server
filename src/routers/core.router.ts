@@ -1,6 +1,6 @@
 import express from 'express'
-import { acceptInvitationToCore, createCore, createInvitationToCore, getUserCores } from '../controllers/core.controller'
 import { verifyToken } from '../middlewares/auth.middleware'
+import { acceptInvitationToCore, createCore, createInvitationToCore, getUserCores } from '../controllers/core.controller'
 
 const router = express.Router()
 
