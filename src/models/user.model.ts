@@ -1,5 +1,5 @@
-import supabase from '../db'
 import { PartialUser, User } from '../definitions/types'
+import supabase from '../db'
 
 async function getUsers(searchUser: PartialUser) {
     let query = supabase.from('users').select()

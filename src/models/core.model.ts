@@ -1,6 +1,6 @@
 import { UUID } from 'node:crypto'
-import supabase from '../db'
 import { Core, PartialCore } from '../definitions/types'
+import supabase from '../db'
 
 async function getCores(searchCore: PartialCore) {
     let query = supabase.from('cores').select()
