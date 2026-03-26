@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import crypto from 'node:crypto'
 import { User } from '../definitions/types'
-import UserModel from '../models/user.model'
+import { UserModel } from '../models'
 import { userSchema } from '../schemas/user.schema'
 
 async function test(req: Request, res: Response, next: NextFunction) {
