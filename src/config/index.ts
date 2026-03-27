@@ -4,7 +4,7 @@ import cors from 'cors'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 
-const FRONTEND_URL = process.env.ORIGIN || 'http://localhost:2409' // Poner IP del ordenador para probar en dispositivos
+const FRONTEND_URL = process.env.ORIGIN || 'http://localhost:2409'
 
 export default (app: Express) => {
     app.set('trust proxy', 1)
