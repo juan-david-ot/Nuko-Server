@@ -42,7 +42,7 @@ async function addUserToCore(coreId: UUID, userId: UUID) {
     return supabase.from('cores_users').insert({ core_id: coreId, user_id: userId }).select().limit(1).single()
 }
 
-export default {
+export {
     getCores,
     getCoresByUserId,
     getCore,
