@@ -5,7 +5,7 @@ const roleSchema = z.object({
         .uuid({ error: 'El ID debe ser un UUID valido' })
         .optional(),
     name: z
-        .string({ error: 'Name must be a string' })
+        .string({ error: 'El nombre no es valido' })
         .trim(),
     description: z
         .string()
