@@ -58,15 +58,14 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
         return next(new HttpError(401, 'Credenciales invalidas'))
     }
 
-    const queryParams = email ? { email } : { username }
-    const { data: user, error: queryError } = await UserModel.getUser(queryParams)
+    const { data: userQueryData, error: userQueryError } = await UserModel.getUser(email ? { email } : { username })
 
-    if (queryError && queryError.code !== 'PGRST116') {
-        return next(queryError)
+    if (userQueryError && userQueryError.code !== 'PGRST116') {
+        return next(userQueryError)
     }
 
-    if (user && (await bcrypt.compare(password, user.password))) {
-        const payload = { id: user.id, email: user.email, username: user.username }
+    if (userQueryData && (await bcrypt.compare(password, userQueryData.password))) {
+        const payload = { id: userQueryData.id, email: userQueryData.email, username: userQueryData.username }
         const authToken = jwt.sign(
             payload,
             String(process.env.TOKEN_SECRET),
