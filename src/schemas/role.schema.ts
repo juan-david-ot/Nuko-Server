@@ -2,7 +2,7 @@ import z from 'zod'
 
 const roleSchema = z.object({
     id: z
-        .uuid({ error: 'ID must be a valid UUID' })
+        .uuid({ error: 'El ID debe ser un UUID valido' })
         .optional(),
     name: z
         .string({ error: 'Name must be a string' })

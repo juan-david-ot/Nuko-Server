@@ -2,7 +2,7 @@ import z from 'zod'
 
 const userSchema = z.object({
     id: z
-        .uuid({ error: 'ID must be a valid UUID' })
+        .uuid({ error: 'El ID debe ser un UUID valido' })
         .optional(),
     email: z
         .email({
