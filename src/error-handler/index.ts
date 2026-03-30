@@ -21,7 +21,7 @@ export default (app: Express) => {
         }
 
         if (error instanceof ZodError) {
-            return res.status(400).json({ error: error.issues.map(issue => issue.message) })
+            return res.status(400).json({ error: error.issues[0]?.message })
         }
 
         if (error instanceof PostgrestError) {
