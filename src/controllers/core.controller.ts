@@ -5,15 +5,37 @@ import { CoreModel } from '../models'
 import { HttpError } from '../error-handler/http.error'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction) {
-    const { data: coresData, error: coresError } = await CoreModel.getCoresByUserId(req.payload.id)
+    const { data: coresQueryData, error: coresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
 
-    if (coresError) {
-        return next(coresError)
+    if (coresQueryError) {
+        return next(coresQueryError)
     }
 
-    const cores = coresData.map((item: any) => item.cores)
+    const cores = coresQueryData.map((item: any) => item.cores)
 
     return res.status(200).json(cores)
+}
+
+async function getUserCoreById(req: Request, res: Response, next: NextFunction) {
+    const { id: coreId } = req.params
+
+    const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
+
+    if (userCoresQueryError) {
+        return next(userCoresQueryError)
+    }
+
+    if (!userCoresQueryData.find((item: any) => item.cores.id === coreId)) {
+        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
+    }
+
+    const { data: coreQueryData, error: coreQueryError } = await CoreModel.getCore({ id: String(coreId) })
+
+    if (coreQueryError) {
+        return next(coreQueryError)
+    }
+
+    return res.status(200).json(coreQueryData)
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction) {
@@ -92,6 +114,7 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
 
 export {
     getUserCores,
+    getUserCoreById,
     createCore,
     createInvitationToCore,
     acceptInvitationToCore
