@@ -5,9 +5,9 @@ const coreSchema = z.object({
         .uuid({ error: 'El ID debe ser un UUID valido' })
         .optional(),
     name: z
-        .string({ error: 'Name must be a string' })
+        .string({ error: 'El nombre no es valido' })
         .trim()
-        .min(3, 'Core name must be at least 3 characters long'),
+        .min(3, 'El nombre del nucleo debe tener al menos 3 caracteres'),
     creatorId: z.uuid({ error: 'El creator ID debe ser un UUID valido' }),
     createdAt: z
         .date()
