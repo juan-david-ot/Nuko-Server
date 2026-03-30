@@ -51,7 +51,7 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     }
 
     if (!coresData.some((item: any) => item.cores.id === coreId)) {
-        return next(new HttpError(401, 'Unauthorized'))
+        return next(new HttpError(401, 'No autorizado'))
     }
 
     const payload = { hostId, coreId }

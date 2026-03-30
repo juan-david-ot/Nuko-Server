@@ -17,7 +17,7 @@ export default (app: Express) => {
         }
 
         if (error instanceof UnauthorizedError) {
-            return res.status(error.status).json({ error: error.code })
+            return res.status(error.status).json({ error: 'Token invalido' })
         }
 
         if (error instanceof ZodError) {
@@ -25,7 +25,7 @@ export default (app: Express) => {
         }
 
         if (error instanceof PostgrestError) {
-            return res.status(500).json({ error: 'Could not complete the operation' })
+            return res.status(500).json({ error: 'No se pudo completar la operacion' })
         }
 
         if (error instanceof HttpError) {

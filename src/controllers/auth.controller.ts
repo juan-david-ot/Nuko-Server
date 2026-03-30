@@ -25,7 +25,7 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
     }
 
     if (emailQueryData || usernameQueryData) {
-        return next(new HttpError(400, 'Email or username already exist'))
+        return next(new HttpError(400, 'El nombre de usuario o el email ya existe'))
     }
 
     const salt = bcrypt.genSalt(10)
@@ -51,11 +51,11 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
     const { email, username, password } = result.data
 
     if (!password || (!email && !username)) {
-        return next(new HttpError(401, 'Bad request'))
+        return next(new HttpError(401, 'Solicitud incorrecta'))
     }
 
     if (!result.data.password) {
-        return next(new HttpError(401, 'Invalid credentials'))
+        return next(new HttpError(401, 'Credenciales invalidas'))
     }
 
     const queryParams = email ? { email } : { username }
@@ -75,7 +75,7 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
         return res.status(200).json({ authToken })
     }
     else {
-        return next(new HttpError(401, 'Invalid credentials'))
+        return next(new HttpError(401, 'Credenciales invalidas'))
     }
 }
 
