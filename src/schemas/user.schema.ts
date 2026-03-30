@@ -7,34 +7,34 @@ const userSchema = z.object({
     email: z
         .email({
             error: (issue) => issue.input === undefined || issue.input === null
-                ? 'Email is required'
-                : 'Email must be a valid email address'
+                ? 'El email es requerido'
+                : 'El email no es valido'
         })
         .toLowerCase()
         .trim(),
     username: z
         .string({
             error: (issue) => issue.input === undefined || issue.input === null
-                ? 'Username is required'
-                : 'Username must be a string'
+                ? 'El nombre de usuario es requerido'
+                : 'El nombre de usuario no es valido'
         })
         .trim()
         .toLowerCase()
-        .min(3, 'Username must be at least 3 characters long')
-        .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers and underscores'),
+        .min(3, 'El nombre de usuario debe tener al menos 3 caracteres')
+        .regex(/^[a-zA-Z0-9._-]+$/, 'El nombre de usuario solo debe contener letras, numeros y algunos caracteres especiales (. _ -)'),
     password: z
         .string({
             error: (issue) => issue.input === undefined || issue.input === null
-                ? 'Password is required'
-                : 'Password must be a string'
+                ? 'La contraseña es requerida'
+                : 'La contraseña no es valida'
         })
         .min(8, 'Password must be at least 8 characters long'),
     name: z
-        .string({ error: 'Name must be a string' })
+        .string({ error: 'El nombre no es valido' })
         .trim()
         .optional(),
     surname: z
-        .string({ error: 'Surname must be a string' })
+        .string({ error: 'El apellido no es valido' })
         .trim()
         .optional(),
     createdAt: z
