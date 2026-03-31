@@ -38,6 +38,34 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction) 
     return res.status(200).json(coreQueryData)
 }
 
+async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction) {
+    const { id: coreId } = req.params
+
+    const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
+
+    if (userCoresQueryError) {
+        return next(userCoresQueryError)
+    }
+
+    if (!userCoresQueryData.find((item: any) => item.cores.id === coreId)) {
+        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
+    }
+
+    const { data: coreQueryData, error: coreQueryError } = await CoreModel.getCore({ id: String(coreId) })
+
+    if (coreQueryError) {
+        return next(coreQueryError)
+    }
+
+    const { data: coreUsersQueryData, error: coreUsersQueryError } = await CoreModel.getUsersFromCore(String(coreId))
+
+    if (coreUsersQueryError) {
+        return next(coreUsersQueryError)
+    }
+
+    return res.status(200).json({ coreQueryData, coreUsersQueryData })
+}
+
 async function createCore(req: Request, res: Response, next: NextFunction) {
     const result = await coreSchema.safeParseAsync({ ...req.body, creatorId: req.payload.id })
 
@@ -115,6 +143,7 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
 export {
     getUserCores,
     getUserCoreById,
+    getUserCoreInformationById,
     createCore,
     createInvitationToCore,
     acceptInvitationToCore
