@@ -63,7 +63,11 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(coreUsersQueryError)
     }
 
-    return res.status(200).json({ core: { ...coreQueryData, users: coreUsersQueryData } })
+    const coreUsers = coreUsersQueryData.map((item: any) => ({ ...item.users, joinedAt: item.joined_at }))
+
+    console.log(coreQueryData)
+
+    return res.status(200).json({ core: { ...coreQueryData, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers } })
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction) {
