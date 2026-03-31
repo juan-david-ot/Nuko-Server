@@ -63,7 +63,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(coreUsersQueryError)
     }
 
-    return res.status(200).json({ coreQueryData, coreUsersQueryData })
+    return res.status(200).json({ core: { ...coreQueryData, users: coreUsersQueryData } })
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction) {
