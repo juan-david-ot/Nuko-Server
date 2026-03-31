@@ -38,7 +38,7 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
         return next(newUserError)
     }
 
-    return res.status(201).json({ ...newUserData, password: undefined })
+    return res.status(201).json({ id: newUserData.id, email: newUserData.email, username: newUserData.username, password: undefined, name: newUserData.name, surname: newUserData.surname, createdAt: newUserData.created_at })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction) {
