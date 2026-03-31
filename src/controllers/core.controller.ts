@@ -35,7 +35,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction) 
         return next(coreQueryError)
     }
 
-    return res.status(200).json(coreQueryData)
+    return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at })
 }
 
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction) {
@@ -67,7 +67,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
 
     console.log(coreQueryData)
 
-    return res.status(200).json({ core: { id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers } })
+    return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers })
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction) {
