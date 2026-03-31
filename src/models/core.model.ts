@@ -42,7 +42,7 @@ async function getUsersFromCore(coreId: string) {
     return supabase.from('cores_users').select('joined_at, users (id, email, username, name, surname)').eq('core_id', coreId)
 }
 
-async function addUserToCore(coreId: UUID, userId: UUID) {
+async function addUserToCore(coreId: string, userId: string) {
     return supabase.from('cores_users').insert({ core_id: coreId, user_id: userId }).select().limit(1).single()
 }
 
