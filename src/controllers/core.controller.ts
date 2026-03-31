@@ -11,7 +11,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction) {
         return next(coresQueryError)
     }
 
-    const cores = coresQueryData.map((item: any) => item.cores)
+    const cores = coresQueryData.map((item: any) => ({ id: item.cores.id, name: item.cores.name, creatorId: item.cores.creator_id, createdAt: item.cores.created_at }))
 
     return res.status(200).json(cores)
 }
