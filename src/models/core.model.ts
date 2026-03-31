@@ -1,4 +1,3 @@
-import { UUID } from 'node:crypto'
 import { Core, PartialCore } from '../definitions/types'
 import supabase from '../db'
 
