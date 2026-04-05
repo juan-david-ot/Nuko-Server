@@ -8,7 +8,9 @@
     // See also https://aka.ms/tsconfig/module
     "module": "ESNext",
     "target": "ESNext",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],
@@ -33,7 +35,7 @@
     "esModuleInterop": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "skipLibCheck": true
   }
