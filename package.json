@@ -10,7 +10,7 @@
     },
     "type": "module",
     "dependencies": {
-        "@supabase/supabase-js": "2.101.1",
+        "@supabase/supabase-js": "2.102.1",
         "bcryptjs": "3.0.3",
         "cookie-parser": "1.4.7",
         "cors": "2.8.6",
