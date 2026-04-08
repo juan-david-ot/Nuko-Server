@@ -1,6 +1,6 @@
 # 💾 Nuko-Server
 
-Nuko is an ecosystem. This repository contains Nuko-Server, the server API used to communicate with clients applications.
+Nuko is a multi-platform application. This repository contains Nuko-Server, the server API used to communicate with clients applications.
 
 ---
 
