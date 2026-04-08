@@ -25,7 +25,7 @@ cd Nuko-Server
 npm install
 ```
 
-- Please request the .env file from the maintainer.
+- Please request the .env file from the author.
 
 - Configure env variables with the .env file.
 
