@@ -31,12 +31,12 @@
         "@types/jsonwebtoken": "^9.0.10",
         "@types/morgan": "1.9.10",
         "@types/node": "25.6.0",
-        "@typescript-eslint/eslint-plugin": "8.58.1",
-        "@typescript-eslint/parser": "8.58.1",
+        "@typescript-eslint/eslint-plugin": "8.58.2",
+        "@typescript-eslint/parser": "8.58.2",
         "eslint": "10.2.0",
         "globals": "17.5.0",
         "tsx": "4.21.0",
         "typescript": "6.0.2",
-        "typescript-eslint": "8.58.1"
+        "typescript-eslint": "8.58.2"
     }
 }
