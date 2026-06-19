@@ -81,7 +81,7 @@ async function logIn(req: Request, res: Response, next: NextFunction) {
 async function verify(req: Request, res: Response) {
     const authUser = req.payload
 
-    res.status(200).json({ authUser })
+    return res.status(200).json({ authUser })
 }
 
 export {
