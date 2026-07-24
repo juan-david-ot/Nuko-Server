@@ -11,7 +11,7 @@ const pg = new Pool({
     ssl: { rejectUnauthorized: false }
 })
 
-const result = await pg.query('SELECT current_database() AS database')
-console.log(`Connected to PostgreSQL! Database: '${result.rows[0].database}'`)
+const { rows: [connection] } = await pg.query('SELECT current_database() AS database')
+console.log(`Connected to PostgreSQL! Database: '${connection.database}'`)
 
 export default pg
