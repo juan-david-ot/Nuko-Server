@@ -1,7 +1,6 @@
 import express from 'express'
 import 'dotenv/config'
 import './db'
-import './db/pg-index'
 import config from './config'
 import routes from './routers'
 import errorHandler from './error-handler'

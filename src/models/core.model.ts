@@ -1,5 +1,6 @@
 import { Core, PartialCore } from '../definitions/types'
-import pg from '../db/pg-index'
+import pg from '../db'
+import { DBError } from '../error-handler/db.error'
 
 async function getCores(searchCore: PartialCore) {
     let query = 'SELECT * FROM cores'
@@ -32,7 +33,7 @@ async function getCores(searchCore: PartialCore) {
     return pg
         .query(query, values)
         .then((result) => ({ data: result.rows, error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function getCoresByUserId(userId: string) {
@@ -47,7 +48,7 @@ async function getCoresByUserId(userId: string) {
             [userId]
         )
         .then((result) => ({ data: result.rows, error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function getCore(searchCore: PartialCore) {
@@ -81,7 +82,7 @@ async function getCore(searchCore: PartialCore) {
     return pg
         .query(`${query} LIMIT 1`, values)
         .then((result) => ({ data: result.rows[0], error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function saveCore(newCore: Core) {
@@ -95,7 +96,7 @@ async function saveCore(newCore: Core) {
             [newCore.name, newCore.creatorId]
         )
         .then((result) => ({ data: result.rows[0], error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function getUsersFromCore(coreId: string) {
@@ -116,7 +117,7 @@ async function getUsersFromCore(coreId: string) {
             [coreId]
         )
         .then((result) => ({ data: result.rows, error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function addUserToCore(coreId: string, userId: string) {
@@ -130,7 +131,7 @@ async function addUserToCore(coreId: string, userId: string) {
             [coreId, userId]
         )
         .then((result) => ({ data: result.rows[0], error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 export {

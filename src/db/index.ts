@@ -1,8 +1,16 @@
-import { createClient } from '@supabase/supabase-js'
+import { Pool } from 'pg'
 
-const SUPABASE_URL = process.env.SUPABASE_URL || 'supabase_url'
-const SUPABASE_KEY = process.env.SUPABASE_PRI_KEY || process.env.SUPABASE_PUB_KEY || 'supabase_key'
+const databaseUrl = process.env.DATABASE_URL || 'database_url'
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+const pg = new Pool({
+    connectionString: databaseUrl,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+    ssl: { rejectUnauthorized: false }
+})
 
-export default supabase
+const { rows: [connection] } = await pg.query('SELECT current_database() AS database')
+console.log(`Connected to PostgreSQL! Database: '${connection.database}'`)
+
+export default pg

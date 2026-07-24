@@ -1,5 +1,6 @@
 import { PartialUser, User } from '../definitions/types'
-import pg from '../db/pg-index'
+import pg from '../db'
+import { DBError } from '../error-handler/db.error'
 
 async function getUsers(searchUser: PartialUser) {
     let query = 'SELECT * FROM users'
@@ -48,7 +49,7 @@ async function getUsers(searchUser: PartialUser) {
     return pg
         .query(query, values)
         .then((result) => ({ data: result.rows, error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function getUser(searchUser: PartialUser) {
@@ -98,7 +99,7 @@ async function getUser(searchUser: PartialUser) {
     return pg
         .query(`${query} LIMIT 1`, values)
         .then((result) => ({ data: result.rows[0], error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 async function saveUser(newUser: User) {
@@ -125,7 +126,7 @@ async function saveUser(newUser: User) {
             ]
         )
         .then((result) => ({ data: result.rows[0], error: null }))
-        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
 export {

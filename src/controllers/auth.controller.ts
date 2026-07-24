@@ -20,7 +20,7 @@ async function signUp(req: Request, res: Response, next: NextFunction) {
         { data: usernameQueryData, error: usernameQueryError }
     ] = await Promise.all([emailQuery, usernameQuery])
 
-    if ((emailQueryError && emailQueryError.code !== 'PGRST116') || (usernameQueryError && usernameQueryError.code !== 'PGRST116')) {
+    if (emailQueryError || usernameQueryError) {
         return next(emailQueryError || usernameQueryError)
     }
 
