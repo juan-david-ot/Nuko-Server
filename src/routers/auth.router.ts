@@ -1,6 +1,6 @@
 import express from 'express'
 import { verifyToken } from '../middlewares/auth.middleware'
-import { logIn, signUp, verify } from '../controllers/pg.auth.controller'
+import { logIn, signUp, verify } from '../controllers/auth.controller'
 
 const router = express.Router()
 

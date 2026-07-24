@@ -1,8 +1,7 @@
 import { PartialUser, User } from '../definitions/types'
 import pg from '../db/pg-index'
-import { QueryResult } from 'pg'
 
-async function getUsers(searchUser: PartialUser): Promise<QueryResult<User>> {
+async function getUsers(searchUser: PartialUser) {
     let query = 'SELECT * FROM users'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -46,10 +45,13 @@ async function getUsers(searchUser: PartialUser): Promise<QueryResult<User>> {
         values.push(searchUser.surname)
     }
 
-    return pg.query(query, values)
+    return pg
+        .query(query, values)
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
-async function getUser(searchUser: PartialUser): Promise<QueryResult<User>> {
+async function getUser(searchUser: PartialUser) {
     let query = 'SELECT * FROM users'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -93,10 +95,13 @@ async function getUser(searchUser: PartialUser): Promise<QueryResult<User>> {
         values.push(searchUser.surname)
     }
 
-    return pg.query(`${query} LIMIT 1`, values)
+    return pg
+        .query(`${query} LIMIT 1`, values)
+        .then((result) => ({ data: result.rows[0] ?? null, error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
-async function saveUser(newUser: User): Promise<QueryResult<any>> {
+async function saveUser(newUser: User) {
     const query = `
         INSERT INTO users (
             email,
@@ -108,16 +113,19 @@ async function saveUser(newUser: User): Promise<QueryResult<any>> {
         VALUES ($1, $2, $3, $4, $5)
         RETURNING *
     `
-    return pg.query(
-        query,
-        [
-            newUser.email,
-            newUser.username,
-            newUser.password,
-            newUser.name,
-            newUser.surname
-        ]
-    )
+    return pg
+        .query(
+            query,
+            [
+                newUser.email,
+                newUser.username,
+                newUser.password,
+                newUser.name,
+                newUser.surname
+            ]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 export {
