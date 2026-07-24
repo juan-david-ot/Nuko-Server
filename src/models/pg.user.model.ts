@@ -97,7 +97,7 @@ async function getUser(searchUser: PartialUser) {
 
     return pg
         .query(`${query} LIMIT 1`, values)
-        .then((result) => ({ data: result.rows[0] ?? null, error: null }))
+        .then((result) => ({ data: result.rows[0], error: null }))
         .catch((error) => ({ data: null, error }))
 }
 

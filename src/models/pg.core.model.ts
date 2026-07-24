@@ -1,0 +1,143 @@
+import { Core, PartialCore } from '../definitions/types'
+import pg from '../db/pg-index'
+
+async function getCores(searchCore: PartialCore) {
+    let query = 'SELECT * FROM cores'
+    const values: unknown[] = []
+    let isFirstCondition = true
+
+    if (searchCore.id) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+        )
+        values.push(searchCore.id)
+        isFirstCondition = false
+    }
+
+    if (searchCore.name) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} name = $${values.length + 1}`
+        )
+        values.push(searchCore.name)
+        isFirstCondition = false
+    }
+
+    if (searchCore.creatorId) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} creator_id = $${values.length + 1}`
+        )
+        values.push(searchCore.creatorId)
+    }
+
+    return pg
+        .query(query, values)
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
+}
+
+async function getCoresByUserId(userId: string) {
+    return pg
+        .query(
+            `
+                SELECT c.id, c.name, c.creator_id, c.created_at
+                FROM cores_users cu
+                INNER JOIN cores c ON cu.core_id = c.id
+                WHERE cu.user_id = $1
+            `,
+            [userId]
+        )
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
+}
+
+async function getCore(searchCore: PartialCore) {
+    let query = 'SELECT * FROM cores'
+    const values: unknown[] = []
+    let isFirstCondition = true
+
+    if (searchCore.id) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+        )
+        values.push(searchCore.id)
+        isFirstCondition = false
+    }
+
+    if (searchCore.name) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} name = $${values.length + 1}`
+        )
+        values.push(searchCore.name)
+        isFirstCondition = false
+    }
+
+    if (searchCore.creatorId) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} creator_id = $${values.length + 1}`
+        )
+        values.push(searchCore.creatorId)
+    }
+
+    return pg
+        .query(`${query} LIMIT 1`, values)
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
+}
+
+async function saveCore(newCore: Core) {
+    return pg
+        .query(
+            `
+                INSERT INTO cores (name, creator_id)
+                VALUES ($1, $2)
+                RETURNING id, name, creator_id, created_at
+            `,
+            [newCore.name, newCore.creatorId]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
+}
+
+async function getUsersFromCore(coreId: string) {
+    return pg
+        .query(
+            `
+                SELECT
+                    cu.joined_at,
+                    u.id,
+                    u.email,
+                    u.username,
+                    u.name,
+                    u.surname
+                FROM cores_users cu
+                INNER JOIN users u ON cu.user_id = u.id
+                WHERE cu.core_id = $1
+            `,
+            [coreId]
+        )
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
+}
+
+async function addUserToCore(coreId: string, userId: string) {
+    return pg
+        .query(
+            `
+                INSERT INTO cores_users (core_id, user_id)
+                VALUES ($1, $2)
+                RETURNING *
+            `,
+            [coreId, userId]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
+}
+
+export {
+    getCores,
+    getCoresByUserId,
+    getCore,
+    saveCore,
+    getUsersFromCore,
+    addUserToCore
+}

@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { coreSchema } from '../schemas/core.schema'
-import { CoreModel } from '../models'
+// import { CoreModel } from '../models'
+import * as CoreModel from '../models/pg.core.model'
 import { HttpError } from '../error-handler/http.error'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction) {
@@ -11,7 +12,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction) {
         return next(coresQueryError)
     }
 
-    const cores = coresQueryData.map((item: any) => ({ id: item.cores.id, name: item.cores.name, creatorId: item.cores.creator_id, createdAt: item.cores.created_at }))
+    const cores = coresQueryData?.map((core: any) => ({ id: core.id, name: core.name, creatorId: core.creator_id, createdAt: core.created_at }))
 
     return res.status(200).json(cores)
 }
@@ -25,7 +26,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction) 
         return next(userCoresQueryError)
     }
 
-    if (!userCoresQueryData.find((item: any) => item.cores.id === coreId)) {
+    if (userCoresQueryData && !userCoresQueryData.find((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
@@ -47,7 +48,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(userCoresQueryError)
     }
 
-    if (!userCoresQueryData.find((item: any) => item.cores.id === coreId)) {
+    if (userCoresQueryData && !userCoresQueryData.find((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
@@ -63,9 +64,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(coreUsersQueryError)
     }
 
-    const coreUsers = coreUsersQueryData.map((item: any) => ({ ...item.users, joinedAt: item.joined_at }))
-
-    console.log(coreQueryData)
+    const coreUsers = coreUsersQueryData?.map((user: any) => ({ ...user, joinedAt: user.joined_at }))
 
     return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers })
 }
@@ -104,7 +103,7 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
         return next(coresError)
     }
 
-    if (!coresData.some((item: any) => item.cores.id === coreId)) {
+    if (coresData && !coresData.some((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No autorizado'))
     }
 
