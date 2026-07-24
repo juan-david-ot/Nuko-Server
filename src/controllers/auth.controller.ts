@@ -2,8 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { partialUserSchema, userSchema } from '../schemas/user.schema'
-// import { UserModel } from '../models'
-import * as UserModel from '../models/pg.user.model'
+import { UserModel } from '../models'
 import { HttpError } from '../error-handler/http.error'
 
 async function signUp(req: Request, res: Response, next: NextFunction) {

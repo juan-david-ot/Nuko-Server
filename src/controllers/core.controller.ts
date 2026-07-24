@@ -1,8 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { coreSchema } from '../schemas/core.schema'
-// import { CoreModel } from '../models'
-import * as CoreModel from '../models/pg.core.model'
+import { CoreModel } from '../models'
 import { HttpError } from '../error-handler/http.error'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction) {

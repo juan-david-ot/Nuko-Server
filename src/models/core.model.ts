@@ -1,48 +1,136 @@
 import { Core, PartialCore } from '../definitions/types'
-import supabase from '../db'
+import pg from '../db/pg-index'
 
 async function getCores(searchCore: PartialCore) {
-    let query = supabase.from('cores').select()
+    let query = 'SELECT * FROM cores'
+    const values: unknown[] = []
+    let isFirstCondition = true
+
     if (searchCore.id) {
-        query = query.eq('id', searchCore.id)
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+        )
+        values.push(searchCore.id)
+        isFirstCondition = false
     }
+
     if (searchCore.name) {
-        query = query.eq('name', searchCore.name)
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} name = $${values.length + 1}`
+        )
+        values.push(searchCore.name)
+        isFirstCondition = false
     }
+
     if (searchCore.creatorId) {
-        query = query.eq('creator_id', searchCore.creatorId)
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} creator_id = $${values.length + 1}`
+        )
+        values.push(searchCore.creatorId)
     }
-    return query
+
+    return pg
+        .query(query, values)
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 async function getCoresByUserId(userId: string) {
-    return supabase.from('cores_users').select('cores(*)').eq('user_id', userId)
+    return pg
+        .query(
+            `
+                SELECT c.id, c.name, c.creator_id, c.created_at
+                FROM cores_users cu
+                INNER JOIN cores c ON cu.core_id = c.id
+                WHERE cu.user_id = $1
+            `,
+            [userId]
+        )
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 async function getCore(searchCore: PartialCore) {
-    let query = supabase.from('cores').select()
+    let query = 'SELECT * FROM cores'
+    const values: unknown[] = []
+    let isFirstCondition = true
+
     if (searchCore.id) {
-        query = query.eq('id', searchCore.id)
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+        )
+        values.push(searchCore.id)
+        isFirstCondition = false
     }
+
     if (searchCore.name) {
-        query = query.eq('name', searchCore.name)
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} name = $${values.length + 1}`
+        )
+        values.push(searchCore.name)
+        isFirstCondition = false
     }
+
     if (searchCore.creatorId) {
-        query = query.eq('creator_id', searchCore.creatorId)
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '} creator_id = $${values.length + 1}`
+        )
+        values.push(searchCore.creatorId)
     }
-    return query.limit(1).single()
+
+    return pg
+        .query(`${query} LIMIT 1`, values)
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 async function saveCore(newCore: Core) {
-    return supabase.from('cores').insert({ name: newCore.name, creator_id: newCore.creatorId }).select().limit(1).single()
+    return pg
+        .query(
+            `
+                INSERT INTO cores (name, creator_id)
+                VALUES ($1, $2)
+                RETURNING id, name, creator_id, created_at
+            `,
+            [newCore.name, newCore.creatorId]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 async function getUsersFromCore(coreId: string) {
-    return supabase.from('cores_users').select('joined_at, users (id, email, username, name, surname)').eq('core_id', coreId)
+    return pg
+        .query(
+            `
+                SELECT
+                    cu.joined_at,
+                    u.id,
+                    u.email,
+                    u.username,
+                    u.name,
+                    u.surname
+                FROM cores_users cu
+                INNER JOIN users u ON cu.user_id = u.id
+                WHERE cu.core_id = $1
+            `,
+            [coreId]
+        )
+        .then((result) => ({ data: result.rows, error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 async function addUserToCore(coreId: string, userId: string) {
-    return supabase.from('cores_users').insert({ core_id: coreId, user_id: userId }).select().limit(1).single()
+    return pg
+        .query(
+            `
+                INSERT INTO cores_users (core_id, user_id)
+                VALUES ($1, $2)
+                RETURNING *
+            `,
+            [coreId, userId]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error }))
 }
 
 export {
