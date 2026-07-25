@@ -1,1 +1,1 @@
-import supabase from '../db'
+import pg from '../db'

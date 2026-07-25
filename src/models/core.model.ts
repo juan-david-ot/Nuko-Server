@@ -1,8 +1,8 @@
-import { Core, PartialCore } from '../definitions/types'
+import { Core, DBResponse, PartialCore } from '../definitions/types'
 import pg from '../db'
 import { DBError } from '../error-handler/db.error'
 
-async function getCores(searchCore: PartialCore) {
+async function getCores(searchCore: PartialCore): Promise<DBResponse> {
     let query = 'SELECT * FROM cores'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -36,7 +36,7 @@ async function getCores(searchCore: PartialCore) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getCoresByUserId(userId: string) {
+async function getCoresByUserId(userId: string): Promise<DBResponse> {
     return pg
         .query(
             `
@@ -51,7 +51,7 @@ async function getCoresByUserId(userId: string) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getCore(searchCore: PartialCore) {
+async function getCore(searchCore: PartialCore): Promise<DBResponse> {
     let query = 'SELECT * FROM cores'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -85,7 +85,7 @@ async function getCore(searchCore: PartialCore) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function saveCore(newCore: Core) {
+async function saveCore(newCore: Core): Promise<DBResponse> {
     return pg
         .query(
             `
@@ -99,7 +99,7 @@ async function saveCore(newCore: Core) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getUsersFromCore(coreId: string) {
+async function getUsersFromCore(coreId: string): Promise<DBResponse> {
     return pg
         .query(
             `
@@ -120,7 +120,7 @@ async function getUsersFromCore(coreId: string) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function addUserToCore(coreId: string, userId: string) {
+async function addUserToCore(coreId: string, userId: string): Promise<DBResponse> {
     return pg
         .query(
             `

@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser'
 
 const FRONTEND_URL = process.env.ORIGIN || 'http://localhost:2409'
 
-export default (app: Express) => {
+export default (app: Express): void => {
     app.set('trust proxy', 1)
 
     app.use(helmet())

@@ -4,7 +4,7 @@ import coreRouter from './core.router'
 import helloWorlRouter from './hello-world.router'
 import testRouter from './test.router'
 
-export default (app: Express) => {
+export default (app: Express): void => {
     app.use('/api/auth', authRouter)
     app.use('/api/cores', coreRouter)
     app.use('/', helloWorlRouter)

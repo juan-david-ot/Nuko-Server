@@ -4,7 +4,7 @@ import { coreSchema } from '../schemas/core.schema'
 import { CoreModel } from '../models'
 import { HttpError } from '../error-handler/http.error'
 
-async function getUserCores(req: Request, res: Response, next: NextFunction) {
+async function getUserCores(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { data: coresQueryData, error: coresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
 
     if (coresQueryError) {
@@ -16,7 +16,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction) {
     return res.status(200).json(cores)
 }
 
-async function getUserCoreById(req: Request, res: Response, next: NextFunction) {
+async function getUserCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { id: coreId } = req.params
 
     const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
@@ -38,7 +38,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction) 
     return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at })
 }
 
-async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction) {
+async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { id: coreId } = req.params
 
     const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
@@ -68,7 +68,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
     return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers })
 }
 
-async function createCore(req: Request, res: Response, next: NextFunction) {
+async function createCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await coreSchema.safeParseAsync({ ...req.body, creatorId: req.payload.id })
 
     if (!result.success) {
@@ -92,7 +92,7 @@ async function createCore(req: Request, res: Response, next: NextFunction) {
     return res.status(201).json({ newCoreData, newCoreUserData })
 }
 
-async function createInvitationToCore(req: Request, res: Response, next: NextFunction) {
+async function createInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { id: hostId } = req.payload
     const { id: coreId } = req.params
 
@@ -118,7 +118,7 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     return res.status(201).json({ inviteLink })
 }
 
-async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction) {
+async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { id: guestId } = req.payload
     const { token: invitationToken } = req.params
     const verified: any = jwt.verify(String(invitationToken), String(process.env.TOKEN_SECRET), (error, decoded) => ({ error, decoded }))

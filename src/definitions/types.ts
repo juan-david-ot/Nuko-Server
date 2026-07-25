@@ -3,6 +3,12 @@ import { partialUserSchema, userSchema } from '../schemas/user.schema'
 import { coreSchema, partialCoreSchema } from '../schemas/core.schema'
 import { coreUserSchema, partialCoreUserSchema } from '../schemas/core-user.schema'
 import { partialRoleSchema, roleSchema } from '../schemas/role.schema'
+import { DBError } from '../error-handler/db.error'
+
+export type DBResponse = {
+    data: any | null
+    error: DBError | null
+}
 
 export type User = z.infer<typeof userSchema>
 export type PartialUser = z.infer<typeof partialUserSchema>

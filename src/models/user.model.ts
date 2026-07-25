@@ -1,8 +1,8 @@
-import { PartialUser, User } from '../definitions/types'
+import { DBResponse, PartialUser, User } from '../definitions/types'
 import pg from '../db'
 import { DBError } from '../error-handler/db.error'
 
-async function getUsers(searchUser: PartialUser) {
+async function getUsers(searchUser: PartialUser): Promise<DBResponse> {
     let query = 'SELECT * FROM users'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -52,7 +52,7 @@ async function getUsers(searchUser: PartialUser) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getUser(searchUser: PartialUser) {
+async function getUser(searchUser: PartialUser): Promise<DBResponse> {
     let query = 'SELECT * FROM users'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -102,7 +102,7 @@ async function getUser(searchUser: PartialUser) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function saveUser(newUser: User) {
+async function saveUser(newUser: User): Promise<DBResponse> {
     const query = `
         INSERT INTO users (
             email,

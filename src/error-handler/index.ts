@@ -4,7 +4,7 @@ import { ZodError } from 'zod'
 import { HttpError } from './http.error'
 import { DBError } from './db.error'
 
-export default (app: Express) => {
+export default (app: Express): void => {
     app.use((req: Request, res: Response, next: NextFunction) => {
         return next(new HttpError(404, 'Route not found'))
     })
@@ -32,8 +32,6 @@ export default (app: Express) => {
             return res.status(error.statusCode).json({ error: error.message })
         }
 
-        return res.status(500).json({
-            error: 'Internal server error'
-        })
+        return res.status(500).json({ error: 'Internal server error' })
     })
 }
