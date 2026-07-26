@@ -1,19 +1,19 @@
 import express from 'express'
 import { verifyToken } from '../middlewares/auth.middleware'
-import { acceptInvitationToCore, createCore, createInvitationToCore, getUserCoreById, getUserCoreInformationById, getUserCores } from '../controllers/core.controller'
+import { CoreController } from '../controllers'
 
 const router = express.Router()
 
-router.get('/', verifyToken, getUserCores)
+router.get('/', verifyToken, CoreController.getUserCores)
 
-router.get('/:id', verifyToken, getUserCoreById)
+router.get('/:id', verifyToken, CoreController.getUserCoreById)
 
-router.get('/:id/information', verifyToken, getUserCoreInformationById)
+router.get('/:id/information', verifyToken, CoreController.getUserCoreInformationById)
 
-router.post('/', verifyToken, createCore)
+router.post('/', verifyToken, CoreController.createCore)
 
-router.post('/:id/invitation', verifyToken, createInvitationToCore)
+router.post('/:id/invitation', verifyToken, CoreController.createInvitationToCore)
 
-router.post('/invitation/:token', verifyToken, acceptInvitationToCore)
+router.post('/invitation/:token', verifyToken, CoreController.acceptInvitationToCore)
 
 export default router
