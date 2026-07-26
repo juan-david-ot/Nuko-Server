@@ -83,7 +83,7 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
         return next(newCoreError)
     }
 
-    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(newCoreData.id, req.payload.id)
+    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(newCoreData.id, req.payload.id, '6e17aa28-2e12-4b9f-81da-6d3dc1f4ff03')
 
     if (newCoreUserError) {
         return next(newCoreUserError)
@@ -133,7 +133,7 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
         return next(coreError)
     }
 
-    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(coreData.id, guestId)
+    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(coreData.id, guestId, '1b01156b-e6c2-458d-b488-12d44c38e1f3')
 
     if (newCoreUserError) {
         return next(newCoreUserError)

@@ -120,15 +120,15 @@ async function getUsersFromCore(coreId: string): Promise<DBResponse> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function addUserToCore(coreId: string, userId: string): Promise<DBResponse> {
+async function addUserToCore(coreId: string, userId: string, roleId: string): Promise<DBResponse> {
     return pg
         .query(
             `
-                INSERT INTO cores_users (core_id, user_id)
-                VALUES ($1, $2)
+                INSERT INTO cores_users (core_id, user_id, role_id)
+                VALUES ($1, $2, $3)
                 RETURNING *
             `,
-            [coreId, userId]
+            [coreId, userId, roleId]
         )
         .then((result) => ({ data: result.rows[0], error: null }))
         .catch((error) => ({ data: null, error: new DBError(error) }))
