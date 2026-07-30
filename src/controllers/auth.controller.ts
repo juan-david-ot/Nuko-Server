@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { partialUserSchema, userSchema } from '../schemas/user.schema'
 import { UserModel } from '../models'
 import { HttpError } from '../error-handler/http.error'
+import emailService from '../services/email.service'
 
 async function signUp(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await userSchema.safeParseAsync(req.body)
@@ -37,6 +38,14 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
     if (newUserError) {
         return next(newUserError)
     }
+
+    const { data: emailData, error: emailError } = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), [newUserData.email])
+
+    if (emailError) {
+        console.error(emailError)
+    }
+
+    console.log(emailData)
 
     return res.status(201).json({ id: newUserData.id, email: newUserData.email, username: newUserData.username, password: undefined, name: newUserData.name, surname: newUserData.surname, createdAt: newUserData.created_at })
 }
