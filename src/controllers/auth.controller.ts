@@ -43,13 +43,13 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
         return next(new HttpError(500, 'No se pudo crear el usuario'))
     }
 
-    const { data: emailData, error: emailError } = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), newUserQueryData)
+    const emailResult = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), newUserQueryData)
 
-    if (emailError) {
-        console.error(emailError)
+    if (emailResult.error) {
+        console.error(emailResult.error)
     }
 
-    console.log(emailData)
+    console.log(emailResult.data)
 
     return res.status(201).json({ id: newUserQueryData.id, email: newUserQueryData.email, username: newUserQueryData.username, password: undefined, name: newUserQueryData.name, surname: newUserQueryData.surname, createdAt: newUserQueryData.created_at })
 }
@@ -65,10 +65,6 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
 
     if (!password || (!email && !username)) {
         return next(new HttpError(401, 'Solicitud incorrecta'))
-    }
-
-    if (!result.data.password) {
-        return next(new HttpError(401, 'Credenciales invalidas'))
     }
 
     const { data: userQueryData, error: userQueryError } = await UserModel.getUser(email ? { email } : { username })

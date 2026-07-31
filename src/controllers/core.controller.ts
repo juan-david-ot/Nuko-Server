@@ -19,6 +19,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
 async function getUserCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { id: coreId } = req.params
 
+    const coreQuery = CoreModel.getCore({ id: String(coreId) })
     const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
 
     if (userCoresQueryError) {
@@ -29,7 +30,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
-    const { data: coreQueryData, error: coreQueryError } = await CoreModel.getCore({ id: String(coreId) })
+    const { data: coreQueryData, error: coreQueryError } = await coreQuery
 
     if (coreQueryError) {
         return next(coreQueryError)
@@ -45,6 +46,8 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { id: coreId } = req.params
 
+    const coreQuery = CoreModel.getCore({ id: String(coreId) })
+    const coreUsersQuery = CoreModel.getUsersFromCore(String(coreId))
     const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
 
     if (userCoresQueryError) {
@@ -55,7 +58,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
-    const { data: coreQueryData, error: coreQueryError } = await CoreModel.getCore({ id: String(coreId) })
+    const { data: coreQueryData, error: coreQueryError } = await coreQuery
 
     if (coreQueryError) {
         return next(coreQueryError)
@@ -65,7 +68,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    const { data: coreUsersQueryData, error: coreUsersQueryError } = await CoreModel.getUsersFromCore(String(coreId))
+    const { data: coreUsersQueryData, error: coreUsersQueryError } = await coreUsersQuery
 
     if (coreUsersQueryError) {
         return next(coreUsersQueryError)
