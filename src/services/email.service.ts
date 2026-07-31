@@ -11,7 +11,7 @@ async function sendWelcomeEmail(sender: string, recipient: DBUser): Promise<Crea
             id: 'welcome-email',
             variables: {
                 username: recipient.username,
-                dashboard_url: 'https://nukoapp.com'
+                dashboard_url: 'http://localhost:2409/home'
             }
         }
     })
