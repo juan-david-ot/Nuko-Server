@@ -1,13 +1,19 @@
 import { Resend } from 'resend'
+import { DBUser } from '../definitions/types'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-async function sendWelcomeEmail(from: string, to: string[]) {
+async function sendWelcomeEmail(sender: string, recipient: DBUser) {
     return resend.emails.send({
-        from: from,
-        to: to,
-        subject: 'hello world',
-        html: '<strong>it works!</strong>'
+        from: sender,
+        to: recipient.email,
+        template: {
+            id: 'welcome-email',
+            variables: {
+                username: recipient.username,
+                dashboard_url: 'https://nukoapp.com'
+            }
+        }
     })
 }
 

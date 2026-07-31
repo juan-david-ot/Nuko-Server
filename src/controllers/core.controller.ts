@@ -11,7 +11,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
         return next(coresQueryError)
     }
 
-    const cores = coresQueryData?.map((core: any) => ({ id: core.id, name: core.name, creatorId: core.creator_id, createdAt: core.created_at }))
+    const cores = coresQueryData?.map((core: any) => ({ id: core.id, name: core.name, creatorId: core.creator_id, createdAt: core.created_at })) ?? []
 
     return res.status(200).json(cores)
 }
@@ -33,6 +33,10 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
 
     if (coreQueryError) {
         return next(coreQueryError)
+    }
+
+    if (!coreQueryData) {
+        return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
     return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at })
@@ -57,13 +61,17 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(coreQueryError)
     }
 
+    if (!coreQueryData) {
+        return next(new HttpError(404, 'Nucleo no encontrado'))
+    }
+
     const { data: coreUsersQueryData, error: coreUsersQueryError } = await CoreModel.getUsersFromCore(String(coreId))
 
     if (coreUsersQueryError) {
         return next(coreUsersQueryError)
     }
 
-    const coreUsers = coreUsersQueryData?.map((user: any) => ({ ...user, joinedAt: user.joined_at }))
+    const coreUsers = coreUsersQueryData?.map((user: any) => ({ ...user, joinedAt: user.joined_at })) ?? []
 
     return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers })
 }
@@ -81,6 +89,14 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
 
     if (newCoreError) {
         return next(newCoreError)
+    }
+
+    if (!newCoreData) {
+        return next(new HttpError(500, 'No se pudo crear el nucleo'))
+    }
+
+    if (!newCoreData.id) {
+        return next(new HttpError(500, 'No se pudo obtener el identificador del nucleo'))
     }
 
     const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(newCoreData.id, req.payload.id, '6e17aa28-2e12-4b9f-81da-6d3dc1f4ff03')
@@ -131,6 +147,14 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
 
     if (coreError) {
         return next(coreError)
+    }
+
+    if (!coreData) {
+        return next(new HttpError(404, 'Nucleo no encontrado'))
+    }
+
+    if (!coreData.id) {
+        return next(new HttpError(500, 'No se pudo obtener el identificador del nucleo'))
     }
 
     const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(coreData.id, guestId, '1b01156b-e6c2-458d-b488-12d44c38e1f3')

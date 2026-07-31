@@ -33,13 +33,17 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
     const hashedPassword = bcrypt.hash(result.data.password, await salt)
     const newUser = { ...result.data, password: await hashedPassword }
 
-    const { data: newUserData, error: newUserError } = await UserModel.saveUser(newUser)
+    const { data: newUserQueryData, error: newUserQueryError } = await UserModel.saveUser(newUser)
 
-    if (newUserError) {
-        return next(newUserError)
+    if (newUserQueryError) {
+        return next(newUserQueryError)
     }
 
-    const { data: emailData, error: emailError } = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), [newUserData.email])
+    if (!newUserQueryData) {
+        return next(new HttpError(500, 'No se pudo crear el usuario'))
+    }
+
+    const { data: emailData, error: emailError } = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), newUserQueryData)
 
     if (emailError) {
         console.error(emailError)
@@ -47,7 +51,7 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
 
     console.log(emailData)
 
-    return res.status(201).json({ id: newUserData.id, email: newUserData.email, username: newUserData.username, password: undefined, name: newUserData.name, surname: newUserData.surname, createdAt: newUserData.created_at })
+    return res.status(201).json({ id: newUserQueryData.id, email: newUserQueryData.email, username: newUserQueryData.username, password: undefined, name: newUserQueryData.name, surname: newUserQueryData.surname, createdAt: newUserQueryData.created_at })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<Response | void> {

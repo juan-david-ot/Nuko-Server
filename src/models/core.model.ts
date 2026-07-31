@@ -1,8 +1,8 @@
-import { Core, DBResponse, PartialCore } from '../definitions/types'
+import { Core, DBCore, DBResponse, DBUser, PartialCore } from '../definitions/types'
 import pg from '../db'
 import { DBError } from '../error-handler/db.error'
 
-async function getCores(searchCore: PartialCore): Promise<DBResponse> {
+async function getCores(searchCore: PartialCore): Promise<DBResponse<DBCore[]>> {
     let query = 'SELECT * FROM cores'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -36,7 +36,7 @@ async function getCores(searchCore: PartialCore): Promise<DBResponse> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getCoresByUserId(userId: string): Promise<DBResponse> {
+async function getCoresByUserId(userId: string): Promise<DBResponse<DBCore[]>> {
     return pg
         .query(
             `
@@ -51,7 +51,7 @@ async function getCoresByUserId(userId: string): Promise<DBResponse> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getCore(searchCore: PartialCore): Promise<DBResponse> {
+async function getCore(searchCore: PartialCore): Promise<DBResponse<DBCore>> {
     let query = 'SELECT * FROM cores'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -85,7 +85,7 @@ async function getCore(searchCore: PartialCore): Promise<DBResponse> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function saveCore(newCore: Core): Promise<DBResponse> {
+async function saveCore(newCore: Core): Promise<DBResponse<DBCore>> {
     return pg
         .query(
             `
@@ -99,7 +99,7 @@ async function saveCore(newCore: Core): Promise<DBResponse> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function getUsersFromCore(coreId: string): Promise<DBResponse> {
+async function getUsersFromCore(coreId: string): Promise<DBResponse<DBUser[]>> {
     return pg
         .query(
             `
@@ -120,7 +120,7 @@ async function getUsersFromCore(coreId: string): Promise<DBResponse> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function addUserToCore(coreId: string, userId: string, roleId: string): Promise<DBResponse> {
+async function addUserToCore(coreId: string, userId: string, roleId: string): Promise<DBResponse<DBUser>> {
     return pg
         .query(
             `
