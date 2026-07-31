@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
+import z from 'zod'
 import { coreSchema } from '../schemas/core.schema'
 import { CoreModel } from '../models'
 import { HttpError } from '../error-handler/http.error'
@@ -17,7 +18,13 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
 }
 
 async function getUserCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { id: coreId } = req.params
+    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const { id: coreId } = result.data
 
     const coreQuery = CoreModel.getCore({ id: String(coreId) })
     const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
@@ -44,7 +51,13 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
 }
 
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { id: coreId } = req.params
+    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const { id: coreId } = result.data
 
     const coreQuery = CoreModel.getCore({ id: String(coreId) })
     const coreUsersQuery = CoreModel.getUsersFromCore(String(coreId))
@@ -112,8 +125,14 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
 }
 
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const { id: coreId } = result.data
     const { id: hostId } = req.payload
-    const { id: coreId } = req.params
 
     const { data: coresData, error: coresError } = await CoreModel.getCoresByUserId(req.payload.id)
 
@@ -138,8 +157,14 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
 }
 
 async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    const result = await z.object({ token: z.jwt() }).safeParseAsync(req.params)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const { token: invitationToken } = result.data
     const { id: guestId } = req.payload
-    const { token: invitationToken } = req.params
     const verified: any = jwt.verify(String(invitationToken), String(process.env.TOKEN_SECRET), (error, decoded) => ({ error, decoded }))
 
     if (verified.error) {
