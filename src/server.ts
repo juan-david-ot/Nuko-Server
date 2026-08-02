@@ -5,6 +5,8 @@ import initSocket from './sockets/index.ts'
 const server = createServer(app)
 initSocket(server)
 
+const serverUrl = process.env.PUBLIC_URL ?? `http://localhost:${process.env.PORT}`
+
 server.listen(process.env.PORT, () => {
-    console.log(`Server listening on http://localhost:${process.env.PORT}`)
+    console.log(`Server listening on ${serverUrl}`)
 })
