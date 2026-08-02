@@ -5,8 +5,8 @@ import helloWorlRouter from './hello-world.router.ts'
 import testRouter from './test.router.ts'
 
 export default (app: Express): void => {
-    app.use('/api/auth', authRouter)
-    app.use('/api/cores', coreRouter)
+    app.use('/auth', authRouter)
+    app.use('/cores', coreRouter)
     app.use('/', helloWorlRouter)
     app.use('/test', testRouter)
 }
