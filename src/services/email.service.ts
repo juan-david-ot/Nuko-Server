@@ -11,7 +11,7 @@ async function sendWelcomeEmail(sender: string, recipient: DBUser): Promise<Crea
             id: 'welcome-email',
             variables: {
                 username: recipient.username,
-                dashboard_url: process.env.ORIGIN
+                dashboard_url: String(process.env.ORIGIN) + '/auth/iniciar-sesion'
             }
         }
     })
