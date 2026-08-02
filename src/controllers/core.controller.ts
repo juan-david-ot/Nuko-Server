@@ -151,7 +151,7 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
         String(process.env.TOKEN_SECRET),
         { algorithm: 'HS256', expiresIn: '12h' }
     )
-    const inviteLink = `${process.env.ORIGIN}/invite/${inviteToken}`
+    const inviteLink = `${String(process.env.ORIGIN)}/invite/${inviteToken}`
 
     return res.status(201).json({ inviteLink })
 }

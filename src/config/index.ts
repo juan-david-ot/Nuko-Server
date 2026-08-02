@@ -4,15 +4,13 @@ import cors from 'cors'
 import logger from 'morgan'
 import cookieParser from 'cookie-parser'
 
-const FRONTEND_URL = process.env.ORIGIN || 'http://localhost:2409'
-
 export default (app: Express): void => {
     app.set('trust proxy', 1)
 
     app.use(helmet())
     app.use(
         cors({
-            origin: [FRONTEND_URL]
+            origin: [String(process.env.ORIGIN)]
         })
     )
 

@@ -5,7 +5,7 @@ import chatSocket from './chat/chat.socket'
 function initSocket(server: HTTPServer): IOServer {
     const io = new IOServer(server, {
         cors: {
-            origin: process.env.ORIGIN || 'http://localhost:2409' // Poner IP del ordenador para probar en dispositivos
+            origin: process.env.ORIGIN
         }
     })
 

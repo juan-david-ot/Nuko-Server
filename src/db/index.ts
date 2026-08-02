@@ -1,9 +1,7 @@
 import { Pool } from 'pg'
 
-const databaseUrl = process.env.DATABASE_URL || 'database_url'
-
 const pg = new Pool({
-    connectionString: databaseUrl,
+    connectionString: process.env.DATABASE_URL,
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
