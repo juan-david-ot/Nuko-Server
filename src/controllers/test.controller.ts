@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import crypto from 'node:crypto'
-import { User } from '../definitions/types'
-import { UserModel } from '../models'
-import { userSchema } from '../schemas/user.schema'
+import { User } from '../definitions/types.ts'
+import { UserModel } from '../models/index.ts'
+import { userSchema } from '../schemas/user.schema.ts'
 
 async function test(req: Request, res: Response, next: NextFunction) {
 

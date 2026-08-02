@@ -1,1 +1,1 @@
-import pg from '../db'
+import pg from '../db/index.ts'

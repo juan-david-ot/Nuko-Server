@@ -6,7 +6,7 @@
     "outDir": "./build",
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "ESNext",
+    "module": "nodenext",
     "target": "ESNext",
     "types": [
       "node"
@@ -32,10 +32,12 @@
     // Recommended Options
     "strict": true,
     "allowSyntheticDefaultImports": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "skipLibCheck": true
   }

@@ -1,6 +1,6 @@
 import express from 'express'
-import { verifyToken } from '../middlewares/auth.middleware'
-import { CoreController } from '../controllers'
+import { verifyToken } from '../middlewares/auth.middleware.ts'
+import { CoreController } from '../controllers/index.ts'
 
 const router = express.Router()
 

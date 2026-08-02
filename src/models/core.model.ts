@@ -1,6 +1,6 @@
-import { Core, DBCore, DBResponse, DBUser, PartialCore } from '../definitions/types'
-import pg from '../db'
-import { DBError } from '../error-handler/db.error'
+import { Core, DBCore, DBResponse, DBUser, PartialCore } from '../definitions/types.ts'
+import pg from '../db/index.ts'
+import { DBError } from '../error-handler/db.error.ts'
 
 async function getCores(searchCore: PartialCore): Promise<DBResponse<DBCore[]>> {
     let query = 'SELECT * FROM cores'

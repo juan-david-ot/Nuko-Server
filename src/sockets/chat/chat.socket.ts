@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io'
-import { handleMessage } from './chat.service'
+import { handleMessage } from './chat.service.ts'
 
 function chatSocket(io: Server, socket: Socket): void {
     socket.on('disconnect', () => {

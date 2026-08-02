@@ -1,6 +1,6 @@
 import { Server as HTTPServer } from 'node:http'
 import { Server as IOServer, Socket } from 'socket.io'
-import chatSocket from './chat/chat.socket'
+import chatSocket from './chat/chat.socket.ts'
 
 function initSocket(server: HTTPServer): IOServer {
     const io = new IOServer(server, {

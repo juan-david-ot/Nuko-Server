@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import z from 'zod'
-import { coreSchema } from '../schemas/core.schema'
-import { CoreModel } from '../models'
-import { HttpError } from '../error-handler/http.error'
+import { coreSchema } from '../schemas/core.schema.ts'
+import { CoreModel } from '../models/index.ts'
+import { HttpError } from '../error-handler/http.error.ts'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { data: coresQueryData, error: coresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)

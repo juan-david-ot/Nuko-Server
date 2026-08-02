@@ -1,9 +1,9 @@
 import z from 'zod'
-import { partialUserSchema, userSchema } from '../schemas/user.schema'
-import { coreSchema, partialCoreSchema } from '../schemas/core.schema'
-import { coreUserSchema, partialCoreUserSchema } from '../schemas/core-user.schema'
-import { partialRoleSchema, roleSchema } from '../schemas/role.schema'
-import { DBError } from '../error-handler/db.error'
+import { partialUserSchema, userSchema } from '../schemas/user.schema.ts'
+import { coreSchema, partialCoreSchema } from '../schemas/core.schema.ts'
+import { coreUserSchema, partialCoreUserSchema } from '../schemas/core-user.schema.ts'
+import { partialRoleSchema, roleSchema } from '../schemas/role.schema.ts'
+import { DBError } from '../error-handler/db.error.ts'
 
 export type DBResponse<T> = {
     data: T | null

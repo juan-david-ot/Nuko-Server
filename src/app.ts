@@ -1,9 +1,9 @@
 import express from 'express'
 import 'dotenv/config'
-import './db'
-import config from './config'
-import routers from './routers'
-import errorHandler from './error-handler'
+import './db/index.ts'
+import config from './config/index.ts'
+import routers from './routers/index.ts'
+import errorHandler from './error-handler/index.ts'
 
 const app = express()
 

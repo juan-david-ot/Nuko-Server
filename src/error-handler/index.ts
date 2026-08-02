@@ -1,8 +1,8 @@
 import { Express, NextFunction, Request, Response } from 'express'
 import { UnauthorizedError } from 'express-jwt'
 import { ZodError } from 'zod'
-import { HttpError } from './http.error'
-import { DBError } from './db.error'
+import { HttpError } from './http.error.ts'
+import { DBError } from './db.error.ts'
 
 export default (app: Express): void => {
     app.use((req: Request, res: Response, next: NextFunction) => {

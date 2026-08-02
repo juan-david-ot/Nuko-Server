@@ -1,6 +1,6 @@
-import { DBResponse, DBUser, PartialUser, User } from '../definitions/types'
-import pg from '../db'
-import { DBError } from '../error-handler/db.error'
+import { DBResponse, DBUser, PartialUser, User } from '../definitions/types.ts'
+import pg from '../db/index.ts'
+import { DBError } from '../error-handler/db.error.ts'
 
 async function getUsers(searchUser: PartialUser): Promise<DBResponse<DBUser[]>> {
     let query = 'SELECT * FROM users'
