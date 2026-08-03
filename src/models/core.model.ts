@@ -1,4 +1,4 @@
-import type { Core, DBCore, DBResponse, DBUser, PartialCore } from '../definitions/types.ts'
+import type { Core, DBCore, DBCoreUser, DBResponse, DBUser, PartialCore } from '../definitions/types.ts'
 import pg from '../db/index.ts'
 import { DBError } from '../error-handler/db.error.ts'
 
@@ -120,7 +120,7 @@ async function getUsersFromCore(coreId: string): Promise<DBResponse<DBUser[]>> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function addUserToCore(coreId: string, userId: string, roleId: string): Promise<DBResponse<DBUser>> {
+async function addUserToCore(coreId: string, userId: string, roleId: string): Promise<DBResponse<DBCoreUser>> {
     return pg
         .query(
             `

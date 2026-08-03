@@ -121,7 +121,24 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
         return next(newCoreUserQueryError)
     }
 
-    return res.status(201).json({ newCore: newCoreQueryData, newCoreUser: newCoreUserQueryData })
+    if (!newCoreUserQueryData) {
+        return next(new HttpError(500, 'No se pudo obtener la informacion'))
+    }
+
+    return res.status(201).json({
+        newCore: {
+            id: newCoreQueryData.id,
+            name: newCoreQueryData.name,
+            creatorId: newCoreQueryData.creator_id,
+            createdAt: newCoreQueryData.created_at
+        },
+        newCoreUser: {
+            coreId: newCoreUserQueryData.core_id,
+            userId: newCoreUserQueryData.user_id,
+            roleId: newCoreUserQueryData.role_id,
+            joinedAt: newCoreUserQueryData.joined_at
+        }
+    })
 }
 
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -186,17 +203,26 @@ async function decodeInvitationToCore(req: Request, res: Response, next: NextFun
         return next(new HttpError(500, 'No se pudo obtener el usuario'))
     }
 
+    if (!coreQueryData) {
+        return next(new HttpError(500, 'No se pudo obtener el nucleo'))
+    }
+
     return res.status(200).json({
+        core: {
+            id: coreQueryData.id,
+            name: coreQueryData.name,
+            creatorId: coreQueryData.creator_id,
+            createdAt: coreQueryData.created_at
+        },
         hostUser: {
-            id: undefined,
+            id: userQueryData.id,
             email: userQueryData.email,
             username: userQueryData.username,
             password: undefined,
             name: userQueryData.name,
             surname: userQueryData.surname,
             createdAt: userQueryData.created_at
-        },
-        core: coreQueryData
+        }
     })
 }
 
@@ -235,7 +261,24 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
         return next(newCoreUserQueryError)
     }
 
-    return res.status(201).json({ core: coreQueryData, newCoreUser: newCoreUserQueryData })
+    if (!newCoreUserQueryData) {
+        return next(new HttpError(500, 'No se pudo obtener la informacion'))
+    }
+
+    return res.status(201).json({
+        core: {
+            id: coreQueryData.id,
+            name: coreQueryData.name,
+            creatorId: coreQueryData.creator_id,
+            createdAt: coreQueryData.created_at
+        },
+        newCoreUser: {
+            coreId: newCoreUserQueryData.core_id,
+            userId: newCoreUserQueryData.user_id,
+            roleId: newCoreUserQueryData.role_id,
+            joinedAt: newCoreUserQueryData.joined_at
+        }
+    })
 }
 
 export {
