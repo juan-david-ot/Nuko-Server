@@ -1,5 +1,5 @@
-import { CreateEmailResponse, Resend } from 'resend'
-import { DBUser } from '../definitions/types.ts'
+import { type CreateEmailResponse, Resend } from 'resend'
+import { type DBUser } from '../definitions/types.ts'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { coreSchema } from '../schemas/core.schema.ts'

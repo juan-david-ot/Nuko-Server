@@ -1,4 +1,4 @@
-import { DBResponse, DBUser, PartialUser, User } from '../definitions/types.ts'
+import type { DBResponse, DBUser, PartialUser, User } from '../definitions/types.ts'
 import pg from '../db/index.ts'
 import { DBError } from '../error-handler/db.error.ts'
 

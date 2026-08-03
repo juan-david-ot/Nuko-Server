@@ -1,4 +1,4 @@
-import { Express, NextFunction, Request, Response } from 'express'
+import type { Express, NextFunction, Request, Response } from 'express'
 import { UnauthorizedError } from 'express-jwt'
 import { ZodError } from 'zod'
 import { HttpError } from './http.error.ts'

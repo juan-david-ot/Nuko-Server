@@ -33,6 +33,7 @@
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
     "rewriteRelativeImportExtensions": true,
     "esModuleInterop": true,
     "isolatedModules": true,

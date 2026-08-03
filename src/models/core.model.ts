@@ -1,4 +1,4 @@
-import { Core, DBCore, DBResponse, DBUser, PartialCore } from '../definitions/types.ts'
+import type { Core, DBCore, DBResponse, DBUser, PartialCore } from '../definitions/types.ts'
 import pg from '../db/index.ts'
 import { DBError } from '../error-handler/db.error.ts'
 

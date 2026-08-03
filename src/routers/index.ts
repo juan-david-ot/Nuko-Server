@@ -1,4 +1,4 @@
-import { Express } from 'express'
+import type { Express } from 'express'
 import authRouter from './auth.router.ts'
 import coreRouter from './core.router.ts'
 
