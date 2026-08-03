@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { coreSchema } from '../schemas/core.schema.ts'
-import { CoreModel } from '../models/index.ts'
+import { CoreModel, UserModel } from '../models/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -101,27 +101,27 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
 
     const newCore = result.data
 
-    const { data: newCoreData, error: newCoreError } = await CoreModel.saveCore(newCore)
+    const { data: newCoreQueryData, error: newCoreQueryError } = await CoreModel.saveCore(newCore)
 
-    if (newCoreError) {
-        return next(newCoreError)
+    if (newCoreQueryError) {
+        return next(newCoreQueryError)
     }
 
-    if (!newCoreData) {
+    if (!newCoreQueryData) {
         return next(new HttpError(500, 'No se pudo crear el nucleo'))
     }
 
-    if (!newCoreData.id) {
+    if (!newCoreQueryData.id) {
         return next(new HttpError(500, 'No se pudo obtener el identificador del nucleo'))
     }
 
-    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(newCoreData.id, req.payload.id, '6e17aa28-2e12-4b9f-81da-6d3dc1f4ff03')
+    const { data: newCoreUserQueryData, error: newCoreUserQueryError } = await CoreModel.addUserToCore(newCoreQueryData.id, req.payload.id, '6e17aa28-2e12-4b9f-81da-6d3dc1f4ff03')
 
-    if (newCoreUserError) {
-        return next(newCoreUserError)
+    if (newCoreUserQueryError) {
+        return next(newCoreUserQueryError)
     }
 
-    return res.status(201).json({ newCoreData, newCoreUserData })
+    return res.status(201).json({ newCore: newCoreQueryData, newCoreUser: newCoreUserQueryData })
 }
 
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -134,13 +134,13 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     const { id: coreId } = result.data
     const { id: hostId } = req.payload
 
-    const { data: coresData, error: coresError } = await CoreModel.getCoresByUserId(req.payload.id)
+    const { data: coresQueryData, error: coresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
 
-    if (coresError) {
-        return next(coresError)
+    if (coresQueryError) {
+        return next(coresQueryError)
     }
 
-    if (coresData && !coresData.some((core: any) => core.id === coreId)) {
+    if (coresQueryData && !coresQueryData.some((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No autorizado'))
     }
 
@@ -154,6 +154,50 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     const inviteLink = `${String(process.env.ORIGIN)}/invite/${inviteToken}`
 
     return res.status(201).json({ inviteLink })
+}
+
+async function decodeInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    const result = await z.object({ token: z.jwt() }).safeParseAsync(req.params)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const { token: invitationToken } = result.data
+    const verified: any = jwt.verify(String(invitationToken), String(process.env.TOKEN_SECRET), (error, decoded) => ({ error, decoded }))
+
+    if (verified.error) {
+        return next(new HttpError(401, 'Invitacion caducada o invalida'))
+    }
+
+    const userQuery = UserModel.getUser({ id: verified.decoded.hostId })
+    const coreQuery = CoreModel.getCore({ id: verified.decoded.coreId })
+
+    const [
+        { data: userQueryData, error: userQueryError },
+        { data: coreQueryData, error: coreQueryError }
+    ] = await Promise.all([userQuery, coreQuery])
+
+    if (userQueryError || coreQueryError) {
+        return next(userQueryError || coreQueryError)
+    }
+
+    if (!userQueryData) {
+        return next(new HttpError(500, 'No se pudo obtener el usuario'))
+    }
+
+    return res.status(200).json({
+        hostUser: {
+            id: undefined,
+            email: userQueryData.email,
+            username: userQueryData.username,
+            password: undefined,
+            name: userQueryData.name,
+            surname: userQueryData.surname,
+            createdAt: userQueryData.created_at
+        },
+        core: coreQueryData
+    })
 }
 
 async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -171,27 +215,27 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
         return next(new HttpError(401, 'Invitacion caducada o invalida'))
     }
 
-    const { data: coreData, error: coreError } = await CoreModel.getCore({ id: verified.decoded.coreId })
+    const { data: coreQueryData, error: coreQueryError } = await CoreModel.getCore({ id: verified.decoded.coreId })
 
-    if (coreError) {
-        return next(coreError)
+    if (coreQueryError) {
+        return next(coreQueryError)
     }
 
-    if (!coreData) {
+    if (!coreQueryData) {
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    if (!coreData.id) {
+    if (!coreQueryData.id) {
         return next(new HttpError(500, 'No se pudo obtener el identificador del nucleo'))
     }
 
-    const { data: newCoreUserData, error: newCoreUserError } = await CoreModel.addUserToCore(coreData.id, guestId, '1b01156b-e6c2-458d-b488-12d44c38e1f3')
+    const { data: newCoreUserQueryData, error: newCoreUserQueryError } = await CoreModel.addUserToCore(coreQueryData.id, guestId, '1b01156b-e6c2-458d-b488-12d44c38e1f3')
 
-    if (newCoreUserError) {
-        return next(newCoreUserError)
+    if (newCoreUserQueryError) {
+        return next(newCoreUserQueryError)
     }
 
-    return res.status(201).json({ coreData, newCoreUserData })
+    return res.status(201).json({ core: coreQueryData, newCoreUser: newCoreUserQueryData })
 }
 
 export {
@@ -200,5 +244,6 @@ export {
     getUserCoreInformationById,
     createCore,
     createInvitationToCore,
+    decodeInvitationToCore,
     acceptInvitationToCore
 }

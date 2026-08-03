@@ -14,6 +14,8 @@ router.post('/', verifyToken, CoreController.createCore)
 
 router.post('/:id/invitation', verifyToken, CoreController.createInvitationToCore)
 
+router.get('/invitation/:token', verifyToken, CoreController.decodeInvitationToCore)
+
 router.post('/invitation/:token', verifyToken, CoreController.acceptInvitationToCore)
 
 export default router
