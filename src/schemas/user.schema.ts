@@ -28,7 +28,7 @@ const userSchema = z.object({
                 ? 'La contraseña es requerida'
                 : 'La contraseña no es valida'
         })
-        .min(8, 'Password must be at least 8 characters long'),
+        .min(8, 'La contraseña debe tener al menos 8 caracteres'),
     name: z
         .string({ error: 'El nombre no es valido' })
         .trim()
