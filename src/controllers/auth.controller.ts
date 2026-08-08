@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { partialUserSchema, userSchema } from '../schemas/user.schema.ts'
 import { UserModel } from '../models/index.ts'
-import { HttpError } from '../error-handler/http.error.ts'
 import emailService from '../services/email.service.ts'
+import { HttpError } from '../error-handler/http.error.ts'
 
 async function signUp(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await userSchema.safeParseAsync(req.body)
