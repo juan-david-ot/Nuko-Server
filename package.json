@@ -1,6 +1,6 @@
 {
     "name": "nuko-server",
-    "version": "0.4.4",
+    "version": "0.5.0",
     "scripts": {
         "dev": "tsx watch src/index.ts",
         "build": "tsc",
