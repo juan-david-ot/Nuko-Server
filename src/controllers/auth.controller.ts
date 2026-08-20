@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { partialUserSchema, userSchema } from '../schemas/user.schema.ts'
 import { UserModel } from '../models/index.ts'
 import emailService from '../services/email.service.ts'
+import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
 async function signUp(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -51,7 +52,7 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
 
     console.log(emailResult.data)
 
-    return res.status(201).json({ id: newUserQueryData.id, email: newUserQueryData.email, username: newUserQueryData.username, password: undefined, name: newUserQueryData.name, surname: newUserQueryData.surname, createdAt: newUserQueryData.created_at })
+    return res.status(201).json({ ...toCamelCase(newUserQueryData), password: undefined })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<Response | void> {

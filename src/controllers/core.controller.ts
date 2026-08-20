@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { coreSchema } from '../schemas/core.schema.ts'
 import { CoreModel, UserModel } from '../models/index.ts'
+import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -12,7 +13,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
         return next(coresQueryError)
     }
 
-    const cores = coresQueryData?.map((core: any) => ({ id: core.id, name: core.name, creatorId: core.creator_id, createdAt: core.created_at })) ?? []
+    const cores = coresQueryData?.map((core: any) => toCamelCase(core)) ?? []
 
     return res.status(200).json(cores)
 }
@@ -47,7 +48,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at })
+    return res.status(200).json(toCamelCase(coreQueryData))
 }
 
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -87,9 +88,9 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
         return next(coreUsersQueryError)
     }
 
-    const coreUsers = coreUsersQueryData?.map((user: any) => ({ ...user, joinedAt: user.joined_at })) ?? []
+    const coreUsers = coreUsersQueryData?.map((user: any) => toCamelCase(user)) ?? []
 
-    return res.status(200).json({ id: coreQueryData.id, name: coreQueryData.name, creatorId: coreQueryData.creator_id, createdAt: coreQueryData.created_at, users: coreUsers })
+    return res.status(200).json({ ...toCamelCase(coreQueryData), users: coreUsers })
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -126,18 +127,8 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
     }
 
     return res.status(201).json({
-        newCore: {
-            id: newCoreQueryData.id,
-            name: newCoreQueryData.name,
-            creatorId: newCoreQueryData.creator_id,
-            createdAt: newCoreQueryData.created_at
-        },
-        newCoreUser: {
-            coreId: newCoreUserQueryData.core_id,
-            userId: newCoreUserQueryData.user_id,
-            roleId: newCoreUserQueryData.role_id,
-            joinedAt: newCoreUserQueryData.joined_at
-        }
+        newCore: toCamelCase(newCoreQueryData),
+        newCoreUser: toCamelCase(newCoreUserQueryData)
     })
 }
 
@@ -208,21 +199,8 @@ async function decodeInvitationToCore(req: Request, res: Response, next: NextFun
     }
 
     return res.status(200).json({
-        core: {
-            id: coreQueryData.id,
-            name: coreQueryData.name,
-            creatorId: coreQueryData.creator_id,
-            createdAt: coreQueryData.created_at
-        },
-        hostUser: {
-            id: userQueryData.id,
-            email: userQueryData.email,
-            username: userQueryData.username,
-            password: undefined,
-            name: userQueryData.name,
-            surname: userQueryData.surname,
-            createdAt: userQueryData.created_at
-        }
+        core: toCamelCase(coreQueryData),
+        hostUser: { ...toCamelCase(userQueryData), password: undefined }
     })
 }
 
@@ -266,18 +244,8 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
     }
 
     return res.status(201).json({
-        core: {
-            id: coreQueryData.id,
-            name: coreQueryData.name,
-            creatorId: coreQueryData.creator_id,
-            createdAt: coreQueryData.created_at
-        },
-        newCoreUser: {
-            coreId: newCoreUserQueryData.core_id,
-            userId: newCoreUserQueryData.user_id,
-            roleId: newCoreUserQueryData.role_id,
-            joinedAt: newCoreUserQueryData.joined_at
-        }
+        core: toCamelCase(coreQueryData),
+        newCoreUser: toCamelCase(newCoreUserQueryData)
     })
 }
 
