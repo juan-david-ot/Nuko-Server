@@ -75,7 +75,7 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
     }
 
     if (userQueryData && (await bcrypt.compare(password, userQueryData.password))) {
-        const payload = { id: userQueryData.id, email: userQueryData.email, username: userQueryData.username }
+        const payload = { id: userQueryData.id, email: userQueryData.email, username: userQueryData.username, name: userQueryData.name }
         const authToken = jwt.sign(
             payload,
             String(process.env.TOKEN_SECRET),
