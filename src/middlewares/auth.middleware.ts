@@ -2,7 +2,7 @@ import type { Request } from 'express'
 import { expressjwt } from 'express-jwt'
 
 const verifyToken = expressjwt({
-    secret: String(process.env.TOKEN_SECRET),
+    secret: String(process.env.AUTH_TOKEN_SECRET),
     algorithms: ['HS256'],
     requestProperty: 'payload',
     getToken: getTokenFromHeaders

@@ -78,7 +78,7 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
         const payload = { id: userQueryData.id, email: userQueryData.email, username: userQueryData.username, name: userQueryData.name }
         const authToken = jwt.sign(
             payload,
-            String(process.env.TOKEN_SECRET),
+            String(process.env.AUTH_TOKEN_SECRET),
             { algorithm: 'HS256', expiresIn: '4h' }
         )
         return res.status(200).json({ authToken })
