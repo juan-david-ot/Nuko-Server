@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import z from 'zod'
 import { partialUserSchema, userSchema } from '../schemas/user.schema.ts'
 import { UserModel } from '../models/index.ts'
 import emailService from '../services/email.service.ts'
@@ -88,6 +89,67 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
     }
 }
 
+async function changePassword(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    const result = await partialUserSchema.extend({
+        newPassword: z
+            .string({
+                error: (issue) => issue.input === undefined || issue.input === null
+                    ? 'La contraseña es requerida'
+                    : 'La contraseña no es valida'
+            })
+            .min(8, 'La contraseña debe tener al menos 8 caracteres'),
+        confirmNewPassword: z
+            .string({
+                error: (issue) => issue.input === undefined || issue.input === null
+                    ? 'La contraseña es requerida'
+                    : 'La contraseña no es valida'
+            })
+            .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    }).safeParseAsync(req.body)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const { password, newPassword, confirmNewPassword } = result.data
+    const { id } = req.payload
+
+    if (!password || (newPassword !== confirmNewPassword) || (password === newPassword)) {
+        return next(new HttpError(400, 'Solicitud incorrecta'))
+    }
+
+    const { data: userQueryData, error: userQueryError } = await UserModel.getUser({ id })
+
+    if (userQueryError) {
+        return next(userQueryError)
+    }
+
+    if (userQueryData && (await bcrypt.compare(password, userQueryData.password))) {
+        const salt = bcrypt.genSalt(10)
+        const hashedPassword = bcrypt.hash(newPassword, await salt)
+        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword })
+
+        if (updatedUserQueryError) {
+            return next(updatedUserQueryError)
+        }
+
+        if (!updatedUserQueryData) {
+            return next(new HttpError(500, 'No se pudo actualizar el usuario'))
+        }
+
+        const emailResult = await emailService.sendChangedPasswordEmail(String(process.env.EMAIL_FROM), updatedUserQueryData)
+
+        if (emailResult.error) {
+            console.error(emailResult.error)
+        }
+
+        return res.status(200).json({ ...toCamelCase(updatedUserQueryData), password: undefined })
+    }
+    else {
+        return next(new HttpError(401, 'Credenciales invalidas'))
+    }
+}
+
 async function verify(req: Request, res: Response): Promise<Response> {
     const authUser = req.payload
 
@@ -97,5 +159,6 @@ async function verify(req: Request, res: Response): Promise<Response> {
 export {
     signUp,
     logIn,
+    changePassword,
     verify
 }

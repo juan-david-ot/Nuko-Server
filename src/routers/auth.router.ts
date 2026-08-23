@@ -8,6 +8,8 @@ router.post('/signUp', AuthController.signUp)
 
 router.post('/logIn', AuthController.logIn)
 
+router.post('/changePassword', verifyToken, AuthController.changePassword)
+
 router.get('/verify', verifyToken, AuthController.verify)
 
 export default router
