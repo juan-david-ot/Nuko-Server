@@ -1,8 +1,8 @@
-import type { PasswordResetToken } from '../definitions/types.ts'
+import type { DBPasswordReset, DBResponse, PasswordReset } from '../definitions/types.ts'
 import pg from '../db/index.ts'
 import { DBError } from '../error-handler/db.error.ts'
 
-async function getPasswordReset(passwordReset: PasswordResetToken) {
+async function getPasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     let query = 'SELECT * FROM password_reset_tokens'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -36,7 +36,7 @@ async function getPasswordReset(passwordReset: PasswordResetToken) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function savePasswordReset(passwordReset: PasswordResetToken) {
+async function savePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     const query = `
         INSERT INTO password_reset_tokens (
             user_id,
@@ -59,7 +59,7 @@ async function savePasswordReset(passwordReset: PasswordResetToken) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function updatePasswordReset(passwordReset: PasswordResetToken) {
+async function updatePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     let query = 'UPDATE password_reset_tokens SET'
     const values: unknown[] = []
     let isFirstCondition = true
@@ -89,8 +89,35 @@ async function updatePasswordReset(passwordReset: PasswordResetToken) {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function deletePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
+    let query = 'DELETE FROM password_reset_tokens'
+    const values: unknown[] = []
+    let isFirstCondition = true
+
+    if (passwordReset.id) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
+        )
+        values.push(passwordReset.id)
+        isFirstCondition = false
+    }
+
+    if (passwordReset.userId) {
+        query = query.concat(
+            `${isFirstCondition ? ' WHERE ' : ' AND '}user_id = $${values.length + 1}`
+        )
+        values.push(passwordReset.userId)
+    }
+
+    return pg
+        .query(`${query} RETURNING *`, values)
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
+}
+
 export {
     getPasswordReset,
     savePasswordReset,
-    updatePasswordReset
+    updatePasswordReset,
+    deletePasswordReset
 }

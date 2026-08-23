@@ -10,6 +10,8 @@ router.post('/logIn', AuthController.logIn)
 
 router.post('/forgotPassword', AuthController.forgotPassword)
 
+router.post('/resetPassword', AuthController.resetPassword)
+
 router.post('/changePassword', verifyToken, AuthController.changePassword)
 
 router.get('/verify', verifyToken, AuthController.verify)
