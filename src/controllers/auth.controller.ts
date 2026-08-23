@@ -1,9 +1,10 @@
 import type { NextFunction, Request, Response } from 'express'
+import crypto from 'node:crypto'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { partialUserSchema, userSchema } from '../schemas/user.schema.ts'
-import { UserModel } from '../models/index.ts'
+import { PasswordResetModel, UserModel } from '../models/index.ts'
 import emailService from '../services/email.service.ts'
 import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
@@ -89,6 +90,65 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
     }
 }
 
+async function forgotPassword(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    const result = await z.object({
+        email: z
+            .email({
+                error: (issue) => issue.input === undefined || issue.input === null
+                    ? 'El email es requerido'
+                    : 'El email no es valido'
+            })
+    }).safeParseAsync(req.body)
+
+    if (!result.success) {
+        return next(result.error)
+    }
+
+    const userQuery = UserModel.getUser({ email: result.data.email })
+
+    const token = crypto.randomBytes(32).toString('hex')
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
+
+    const { data: userQueryData, error: userQueryError } = await userQuery
+
+    if (userQueryError) {
+        return next(userQueryError)
+    }
+
+    if (userQueryData) {
+        const { data: passwordResetData, error: passwordResetError } = await PasswordResetModel.getPasswordReset({ userId: userQueryData.id })
+
+        if (passwordResetError) {
+            return next(userQueryError)
+        }
+
+        if (passwordResetData) {
+            const savePasswordResetResponse = await PasswordResetModel.updatePasswordReset({ id: passwordResetData.id, tokenHash, expiresAt: new Date(Date.now() + 30 * 60 * 1000) })
+
+            if (savePasswordResetResponse.error) {
+                return next(savePasswordResetResponse.error)
+            }
+        }
+        else {
+            const savePasswordResetResponse = await PasswordResetModel.savePasswordReset({ userId: userQueryData?.id, tokenHash, expiresAt: new Date(Date.now() + 30 * 60 * 1000) })
+
+            if (savePasswordResetResponse.error) {
+                return next(savePasswordResetResponse.error)
+            }
+        }
+
+        const emailResult = await emailService.sendResetPasswordEmail(String(process.env.EMAIL_FROM), userQueryData, token)
+
+        if (emailResult.error) {
+            console.error(emailResult.error)
+        }
+
+        console.log(emailResult.data)
+    }
+
+    return res.status(200).json({ message: 'Si tu cuenta existe, recibiras un email para restablecer la contraseña' })
+}
+
 async function changePassword(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await partialUserSchema.extend({
         newPassword: z
@@ -159,6 +219,7 @@ async function verify(req: Request, res: Response): Promise<Response> {
 export {
     signUp,
     logIn,
+    forgotPassword,
     changePassword,
     verify
 }

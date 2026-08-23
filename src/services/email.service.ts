@@ -31,7 +31,22 @@ async function sendChangedPasswordEmail(sender: string, recipient: DBUser): Prom
     })
 }
 
+async function sendResetPasswordEmail(sender: string, recipient: DBUser, token: string): Promise<CreateEmailResponse> {
+    return resend.emails.send({
+        from: sender,
+        to: recipient.email,
+        template: {
+            id: 'reset-password-email',
+            variables: {
+                username: recipient.username,
+                reset_password_url: String(process.env.ORIGIN) + '/recuperar-contraseña/' + token
+            }
+        }
+    })
+}
+
 export default {
     sendWelcomeEmail,
-    sendChangedPasswordEmail
+    sendChangedPasswordEmail,
+    sendResetPasswordEmail
 }

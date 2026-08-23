@@ -42,3 +42,11 @@ export type CoreUser = z.infer<typeof coreUserSchema>
 export type PartialCoreUser = z.infer<typeof partialCoreUserSchema>
 export type DBCoreUser = DBType<CoreUser>
 export type DBPartialCoreUser = DBType<PartialCoreUser>
+
+export type PasswordResetToken = {
+    id?: string,
+    userId?: string | undefined,
+    tokenHash?: string | undefined,
+    expiresAt?: Date | undefined,
+    createdAt?: Date
+}
