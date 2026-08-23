@@ -129,8 +129,51 @@ async function saveUser(newUser: User): Promise<DBResponse<DBUser>> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function updateUser(updateUser: PartialUser): Promise<DBResponse<DBUser>> {
+    let query = 'UPDATE users SET'
+    const values: unknown[] = []
+    let isFirstCondition = true
+
+    if (updateUser.email) {
+        query = query.concat(` email = $${values.length + 1}`)
+        values.push(updateUser.email)
+        isFirstCondition = false
+    }
+
+    if (updateUser.username) {
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '} username = $${values.length + 1}`)
+        values.push(updateUser.username)
+        isFirstCondition = false
+    }
+
+    if (updateUser.password) {
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '} password = $${values.length + 1}`)
+        values.push(updateUser.password)
+        isFirstCondition = false
+    }
+
+    if (updateUser.name) {
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '} name = $${values.length + 1}`)
+        values.push(updateUser.name)
+        isFirstCondition = false
+    }
+
+    if (updateUser.surname) {
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '} surname = $${values.length + 1}`)
+        values.push(updateUser.surname)
+    }
+
+    values.push(updateUser.id)
+
+    return pg
+        .query(`${query} WHERE id = $${values.length} RETURNING *`, values)
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
+}
+
 export {
     getUsers,
     getUser,
-    saveUser
+    saveUser,
+    updateUser
 }
