@@ -17,6 +17,21 @@ async function sendWelcomeEmail(sender: string, recipient: DBUser): Promise<Crea
     })
 }
 
+async function sendChangedPasswordEmail(sender: string, recipient: DBUser): Promise<CreateEmailResponse> {
+    return resend.emails.send({
+        from: sender,
+        to: recipient.email,
+        template: {
+            id: 'changed-password-email',
+            variables: {
+                username: recipient.username,
+                dashboard_url: String(process.env.ORIGIN) + '/auth/iniciar-sesion'
+            }
+        }
+    })
+}
+
 export default {
-    sendWelcomeEmail
+    sendWelcomeEmail,
+    sendChangedPasswordEmail
 }
