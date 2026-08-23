@@ -9,7 +9,7 @@ async function getUsers(searchUser: PartialUser): Promise<DBResponse<DBUser[]>> 
 
     if (searchUser.id) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
         values.push(searchUser.id)
         isFirstCondition = false
@@ -17,7 +17,7 @@ async function getUsers(searchUser: PartialUser): Promise<DBResponse<DBUser[]>> 
 
     if (searchUser.email) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} email = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}email = $${values.length + 1}`
         )
         values.push(searchUser.email)
         isFirstCondition = false
@@ -25,7 +25,7 @@ async function getUsers(searchUser: PartialUser): Promise<DBResponse<DBUser[]>> 
 
     if (searchUser.username) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} username = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}username = $${values.length + 1}`
         )
         values.push(searchUser.username)
         isFirstCondition = false
@@ -33,7 +33,7 @@ async function getUsers(searchUser: PartialUser): Promise<DBResponse<DBUser[]>> 
 
     if (searchUser.name) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} LOWER(name) = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}LOWER(name) = $${values.length + 1}`
         )
         values.push(searchUser.name)
         isFirstCondition = false
@@ -41,7 +41,7 @@ async function getUsers(searchUser: PartialUser): Promise<DBResponse<DBUser[]>> 
 
     if (searchUser.surname) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} LOWER(surname) = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}LOWER(surname) = $${values.length + 1}`
         )
         values.push(searchUser.surname)
     }
@@ -59,7 +59,7 @@ async function getUser(searchUser: PartialUser): Promise<DBResponse<DBUser>> {
 
     if (searchUser.id) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
         values.push(searchUser.id)
         isFirstCondition = false
@@ -67,7 +67,7 @@ async function getUser(searchUser: PartialUser): Promise<DBResponse<DBUser>> {
 
     if (searchUser.email) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} email = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}email = $${values.length + 1}`
         )
         values.push(searchUser.email)
         isFirstCondition = false
@@ -75,7 +75,7 @@ async function getUser(searchUser: PartialUser): Promise<DBResponse<DBUser>> {
 
     if (searchUser.username) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} username = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}username = $${values.length + 1}`
         )
         values.push(searchUser.username)
         isFirstCondition = false
@@ -83,7 +83,7 @@ async function getUser(searchUser: PartialUser): Promise<DBResponse<DBUser>> {
 
     if (searchUser.name) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} LOWER(name) = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}LOWER(name) = $${values.length + 1}`
         )
         values.push(searchUser.name)
         isFirstCondition = false
@@ -91,7 +91,7 @@ async function getUser(searchUser: PartialUser): Promise<DBResponse<DBUser>> {
 
     if (searchUser.surname) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} LOWER(surname) = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}LOWER(surname) = $${values.length + 1}`
         )
         values.push(searchUser.surname)
     }
@@ -141,25 +141,25 @@ async function updateUser(updateUser: PartialUser): Promise<DBResponse<DBUser>> 
     }
 
     if (updateUser.username) {
-        query = query.concat(`${isFirstCondition ? ' ' : ' , '} username = $${values.length + 1}`)
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '}username = $${values.length + 1}`)
         values.push(updateUser.username)
         isFirstCondition = false
     }
 
     if (updateUser.password) {
-        query = query.concat(`${isFirstCondition ? ' ' : ' , '} password = $${values.length + 1}`)
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '}password = $${values.length + 1}`)
         values.push(updateUser.password)
         isFirstCondition = false
     }
 
     if (updateUser.name) {
-        query = query.concat(`${isFirstCondition ? ' ' : ' , '} name = $${values.length + 1}`)
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '}name = $${values.length + 1}`)
         values.push(updateUser.name)
         isFirstCondition = false
     }
 
     if (updateUser.surname) {
-        query = query.concat(`${isFirstCondition ? ' ' : ' , '} surname = $${values.length + 1}`)
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '}surname = $${values.length + 1}`)
         values.push(updateUser.surname)
     }
 
