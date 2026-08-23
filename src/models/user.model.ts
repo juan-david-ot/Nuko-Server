@@ -161,6 +161,12 @@ async function updateUser(updateUser: PartialUser): Promise<DBResponse<DBUser>> 
     if (updateUser.surname) {
         query = query.concat(`${isFirstCondition ? ' ' : ' , '}surname = $${values.length + 1}`)
         values.push(updateUser.surname)
+        isFirstCondition = false
+    }
+
+    if (updateUser.passwordChangedAt) {
+        query = query.concat(`${isFirstCondition ? ' ' : ' , '}password_changed_at = $${values.length + 1}`)
+        values.push(updateUser.passwordChangedAt)
     }
 
     values.push(updateUser.id)

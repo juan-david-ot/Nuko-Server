@@ -207,7 +207,7 @@ async function resetPassword(req: Request, res: Response, next: NextFunction): P
     if (passwordResetData && userQueryData && passwordResetData.expires_at && passwordResetData.expires_at?.getTime() > Date.now()) {
         const salt = bcrypt.genSalt(10)
         const hashedPassword = bcrypt.hash(newPassword, await salt)
-        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword })
+        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword, passwordChangedAt: new Date() })
         const passwordResetDeleteQuery = PasswordResetModel.deletePasswordReset({ id: passwordResetData.id })
 
         if (updatedUserQueryError) {
@@ -279,7 +279,7 @@ async function changePassword(req: Request, res: Response, next: NextFunction): 
     if (userQueryData && (await bcrypt.compare(password, userQueryData.password))) {
         const salt = bcrypt.genSalt(10)
         const hashedPassword = bcrypt.hash(newPassword, await salt)
-        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword })
+        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword, passwordChangedAt: new Date() })
 
         if (updatedUserQueryError) {
             return next(updatedUserQueryError)
@@ -297,7 +297,13 @@ async function changePassword(req: Request, res: Response, next: NextFunction): 
 
         console.log(emailResult.data)
 
-        return res.status(200).json({ ...toCamelCase(updatedUserQueryData), password: undefined })
+        const payload = { id: updatedUserQueryData.id, email: updatedUserQueryData.email, username: updatedUserQueryData.username, name: updatedUserQueryData.name }
+        const authToken = jwt.sign(
+            payload,
+            String(process.env.AUTH_TOKEN_SECRET),
+            { algorithm: 'HS256', expiresIn: '4h' }
+        )
+        return res.status(200).json({ authToken })
     }
     else {
         return next(new HttpError(401, 'Credenciales invalidas'))

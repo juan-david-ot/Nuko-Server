@@ -1,5 +1,7 @@
-import type { Request } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import { expressjwt } from 'express-jwt'
+import { UserModel } from '../models/index.ts'
+import { HttpError } from '../error-handler/http.error.ts'
 
 const verifyToken = expressjwt({
     secret: String(process.env.AUTH_TOKEN_SECRET),
@@ -16,6 +18,34 @@ function getTokenFromHeaders(req: Request): string | undefined {
     return undefined
 }
 
+async function verifyExpiration(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { id, iat } = req.payload
+
+    const { data: userQueryData, error: userQueryError } = await UserModel.getUser({ id })
+
+    if (userQueryError) {
+        return next(userQueryError)
+    }
+
+    if (!userQueryData) {
+        return next(new HttpError(401, 'Usuario no encontrado'))
+    }
+
+    if (userQueryData.password_changed_at) {
+        const passwordChangedAtSeconds = Math.floor(userQueryData.password_changed_at.getTime() / 1000)
+
+        console.log(iat, passwordChangedAtSeconds)
+
+        if (iat < passwordChangedAtSeconds) {
+            return next(new HttpError(401, 'La sesión ha expirado, inicia sesión de nuevo'))
+        }
+    }
+
+    next()
+}
+
+const requireAuth = [verifyToken, verifyExpiration]
+
 export {
-    verifyToken
+    requireAuth
 }
