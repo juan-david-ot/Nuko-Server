@@ -20,15 +20,15 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
     const usernameQuery = UserModel.getUser({ username: result.data.username })
 
     const [
-        { data: emailQueryData, error: emailQueryError },
-        { data: usernameQueryData, error: usernameQueryError }
+        emailResponse,
+        usernameResponse
     ] = await Promise.all([emailQuery, usernameQuery])
 
-    if (emailQueryError || usernameQueryError) {
-        return next(emailQueryError || usernameQueryError)
+    if (emailResponse.error || usernameResponse.error) {
+        return next(emailResponse.error || usernameResponse.error)
     }
 
-    if (emailQueryData || usernameQueryData) {
+    if (emailResponse.data || usernameResponse.data) {
         return next(new HttpError(400, 'El nombre de usuario o el email ya existe'))
     }
 
@@ -36,25 +36,25 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
     const hashedPassword = bcrypt.hash(result.data.password, await salt)
     const newUser = { ...result.data, password: await hashedPassword }
 
-    const { data: newUserQueryData, error: newUserQueryError } = await UserModel.saveUser(newUser)
+    const newUserResponse = await UserModel.saveUser(newUser)
 
-    if (newUserQueryError) {
-        return next(newUserQueryError)
+    if (newUserResponse.error) {
+        return next(newUserResponse.error)
     }
 
-    if (!newUserQueryData) {
+    if (!newUserResponse.data) {
         return next(new HttpError(500, 'No se pudo crear el usuario'))
     }
 
-    const emailResult = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), newUserQueryData)
+    const sendEmailResult = await emailService.sendWelcomeEmail(String(process.env.EMAIL_FROM), newUserResponse.data)
 
-    if (emailResult.error) {
-        console.error(emailResult.error)
+    if (sendEmailResult.error) {
+        console.error(sendEmailResult.error)
     }
 
-    console.log(emailResult.data)
+    console.log(sendEmailResult.data)
 
-    return res.status(201).json({ ...toCamelCase(newUserQueryData), password: undefined })
+    return res.status(201).json({ ...toCamelCase(newUserResponse.data), password: undefined })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -70,14 +70,14 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
         return next(new HttpError(401, 'Solicitud incorrecta'))
     }
 
-    const { data: userQueryData, error: userQueryError } = await UserModel.getUser(email ? { email } : { username })
+    const userResponse = await UserModel.getUser(email ? { email } : { username })
 
-    if (userQueryError) {
-        return next(userQueryError)
+    if (userResponse.error) {
+        return next(userResponse.error)
     }
 
-    if (userQueryData && (await bcrypt.compare(password, userQueryData.password))) {
-        const payload = { id: userQueryData.id, email: userQueryData.email, username: userQueryData.username, name: userQueryData.name }
+    if (userResponse.data && (await bcrypt.compare(password, userResponse.data.password))) {
+        const payload = { id: userResponse.data.id, email: userResponse.data.email, username: userResponse.data.username, name: userResponse.data.name }
         const authToken = jwt.sign(
             payload,
             String(process.env.AUTH_TOKEN_SECRET),
@@ -112,45 +112,45 @@ async function forgotPassword(req: Request, res: Response, next: NextFunction): 
     const token = crypto.randomBytes(32).toString('hex')
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex')
 
-    const { data: userQueryData, error: userQueryError } = await userQuery
+    const userResponse = await userQuery
 
-    if (userQueryError) {
-        return next(userQueryError)
+    if (userResponse.error) {
+        return next(userResponse.error)
     }
 
-    if (userQueryData) {
-        const { data: passwordResetData, error: passwordResetError } = await PasswordResetModel.getPasswordReset({ userId: userQueryData.id })
+    if (userResponse.data) {
+        const passwordResetResponse = await PasswordResetModel.getPasswordReset({ userId: userResponse.data.id })
 
-        if (passwordResetError) {
-            return next(passwordResetError)
+        if (passwordResetResponse.error) {
+            return next(passwordResetResponse.error)
         }
 
-        if (passwordResetData) {
-            const savePasswordResetResponse = await PasswordResetModel.updatePasswordReset({ id: passwordResetData.id, tokenHash, expiresAt: new Date(Date.now() + 30 * 60 * 1000) })
+        if (passwordResetResponse.data) {
+            const updatePasswordResetResponse = await PasswordResetModel.updatePasswordReset({ id: passwordResetResponse.data.id, tokenHash, expiresAt: new Date(Date.now() + 30 * 60 * 1000) })
 
-            if (savePasswordResetResponse.error) {
-                return next(savePasswordResetResponse.error)
+            if (updatePasswordResetResponse.error) {
+                return next(updatePasswordResetResponse.error)
             }
 
-            console.log(savePasswordResetResponse.data)
+            console.log(updatePasswordResetResponse.data)
         }
         else {
-            const savePasswordResetResponse = await PasswordResetModel.savePasswordReset({ userId: userQueryData?.id, tokenHash, expiresAt: new Date(Date.now() + 30 * 60 * 1000) })
+            const newPasswordResetResponse = await PasswordResetModel.savePasswordReset({ userId: userResponse.data.id, tokenHash, expiresAt: new Date(Date.now() + 30 * 60 * 1000) })
 
-            if (savePasswordResetResponse.error) {
-                return next(savePasswordResetResponse.error)
+            if (newPasswordResetResponse.error) {
+                return next(newPasswordResetResponse.error)
             }
 
-            console.log(savePasswordResetResponse.data)
+            console.log(newPasswordResetResponse.data)
         }
 
-        const emailResult = await emailService.sendResetPasswordEmail(String(process.env.EMAIL_FROM), userQueryData, token)
+        const sendEmailResult = await emailService.sendResetPasswordEmail(String(process.env.EMAIL_FROM), userResponse.data, token)
 
-        if (emailResult.error) {
-            console.error(emailResult.error)
+        if (sendEmailResult.error) {
+            console.error(sendEmailResult.error)
         }
 
-        console.log(emailResult.data)
+        console.log(sendEmailResult.data)
     }
 
     const elapsed = Date.now() - start
@@ -192,49 +192,52 @@ async function resetPassword(req: Request, res: Response, next: NextFunction): P
         return next(new HttpError(400, 'Solicitud incorrecta'))
     }
 
-    const { data: passwordResetData, error: passwordResetError } = await passwordResetQuery
+    const passwordResetResponse = await passwordResetQuery
 
-    if (passwordResetError) {
-        return next(passwordResetError)
+    if (passwordResetResponse.error) {
+        return next(passwordResetResponse.error)
     }
 
-    const { data: userQueryData, error: userQueryError } = await UserModel.getUser({ id: passwordResetData?.user_id })
-
-    if (userQueryError) {
-        return next(userQueryError)
+    if (!passwordResetResponse.data) {
+        return next(new HttpError(400, 'El enlace no es válido o ha expirado. Solicita uno nuevo.'))
     }
 
-    if (passwordResetData && userQueryData && passwordResetData.expires_at && passwordResetData.expires_at?.getTime() > Date.now()) {
+    const userResponse = await UserModel.getUser({ id: passwordResetResponse.data.user_id })
+
+    if (userResponse.error) {
+        return next(userResponse.error)
+    }
+
+    if (passwordResetResponse.data && userResponse.data && passwordResetResponse.data.expires_at && passwordResetResponse.data.expires_at?.getTime() > Date.now()) {
         const salt = bcrypt.genSalt(10)
         const hashedPassword = bcrypt.hash(newPassword, await salt)
-        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword, passwordChangedAt: new Date() })
-        const passwordResetDeleteQuery = PasswordResetModel.deletePasswordReset({ id: passwordResetData.id })
+        const updateUserResponse = await UserModel.updateUser({ id: userResponse.data.id, password: await hashedPassword, passwordChangedAt: new Date() })
 
-        if (updatedUserQueryError) {
-            return next(updatedUserQueryError)
+        if (updateUserResponse.error) {
+            return next(updateUserResponse.error)
         }
 
-        if (!updatedUserQueryData) {
+        if (!updateUserResponse.data) {
             return next(new HttpError(500, 'No se pudo actualizar el usuario'))
         }
 
-        const { data: passwordResetDeleteData, error: passwordResetDeleteError } = await passwordResetDeleteQuery
+        const deletePasswordResetResponse = await PasswordResetModel.deletePasswordReset({ id: passwordResetResponse.data.id })
 
-        if (passwordResetDeleteError) {
-            return next(passwordResetDeleteError)
+        if (deletePasswordResetResponse.error) {
+            return next(deletePasswordResetResponse.error)
         }
 
-        console.log(passwordResetDeleteData)
+        console.log(deletePasswordResetResponse.data)
 
-        const emailResult = await emailService.sendChangedPasswordEmail(String(process.env.EMAIL_FROM), updatedUserQueryData)
+        const sendEmailResult = await emailService.sendChangedPasswordEmail(String(process.env.EMAIL_FROM), updateUserResponse.data)
 
-        if (emailResult.error) {
-            console.error(emailResult.error)
+        if (sendEmailResult.error) {
+            console.error(sendEmailResult.error)
         }
 
-        console.log(emailResult.data)
+        console.log(sendEmailResult.data)
 
-        return res.status(200).json({ ...toCamelCase(updatedUserQueryData), password: undefined })
+        return res.status(200).json({ ...toCamelCase(updateUserResponse.data), password: undefined })
     }
     else {
         return next(new HttpError(400, 'El enlace no es válido o ha expirado. Solicita uno nuevo.'))
@@ -270,34 +273,34 @@ async function changePassword(req: Request, res: Response, next: NextFunction): 
         return next(new HttpError(400, 'Solicitud incorrecta'))
     }
 
-    const { data: userQueryData, error: userQueryError } = await UserModel.getUser({ id })
+    const userResponse = await UserModel.getUser({ id })
 
-    if (userQueryError) {
-        return next(userQueryError)
+    if (userResponse.error) {
+        return next(userResponse.error)
     }
 
-    if (userQueryData && (await bcrypt.compare(password, userQueryData.password))) {
+    if (userResponse.data && (await bcrypt.compare(password, userResponse.data.password))) {
         const salt = bcrypt.genSalt(10)
         const hashedPassword = bcrypt.hash(newPassword, await salt)
-        const { data: updatedUserQueryData, error: updatedUserQueryError } = await UserModel.updateUser({ id: userQueryData.id, password: await hashedPassword, passwordChangedAt: new Date() })
+        const updateUserResponse = await UserModel.updateUser({ id: userResponse.data.id, password: await hashedPassword, passwordChangedAt: new Date() })
 
-        if (updatedUserQueryError) {
-            return next(updatedUserQueryError)
+        if (updateUserResponse.error) {
+            return next(updateUserResponse.error)
         }
 
-        if (!updatedUserQueryData) {
+        if (!updateUserResponse.data) {
             return next(new HttpError(500, 'No se pudo actualizar el usuario'))
         }
 
-        const emailResult = await emailService.sendChangedPasswordEmail(String(process.env.EMAIL_FROM), updatedUserQueryData)
+        const sendEmailResult = await emailService.sendChangedPasswordEmail(String(process.env.EMAIL_FROM), updateUserResponse.data)
 
-        if (emailResult.error) {
-            console.error(emailResult.error)
+        if (sendEmailResult.error) {
+            console.error(sendEmailResult.error)
         }
 
-        console.log(emailResult.data)
+        console.log(sendEmailResult.data)
 
-        const payload = { id: updatedUserQueryData.id, email: updatedUserQueryData.email, username: updatedUserQueryData.username, name: updatedUserQueryData.name }
+        const payload = { id: updateUserResponse.data.id, email: updateUserResponse.data.email, username: updateUserResponse.data.username, name: updateUserResponse.data.name }
         const authToken = jwt.sign(
             payload,
             String(process.env.AUTH_TOKEN_SECRET),

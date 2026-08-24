@@ -7,13 +7,13 @@ import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
 async function getUserCores(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const { data: coresQueryData, error: coresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
+    const coresResponse = await CoreModel.getCoresByUserId(req.payload.id)
 
-    if (coresQueryError) {
-        return next(coresQueryError)
+    if (coresResponse.error) {
+        return next(coresResponse.error)
     }
 
-    const cores = coresQueryData?.map((core: any) => toCamelCase(core)) ?? []
+    const cores = coresResponse.data?.map((core: any) => toCamelCase(core)) ?? []
 
     return res.status(200).json(cores)
 }
@@ -28,27 +28,27 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
     const { id: coreId } = result.data
 
     const coreQuery = CoreModel.getCore({ id: String(coreId) })
-    const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
+    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
 
-    if (userCoresQueryError) {
-        return next(userCoresQueryError)
+    if (userCoresResponse.error) {
+        return next(userCoresResponse.error)
     }
 
-    if (userCoresQueryData && !userCoresQueryData.find((core: any) => core.id === coreId)) {
+    if (userCoresResponse.data && !userCoresResponse.data.find((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
-    const { data: coreQueryData, error: coreQueryError } = await coreQuery
+    const coreResponse = await coreQuery
 
-    if (coreQueryError) {
-        return next(coreQueryError)
+    if (coreResponse.error) {
+        return next(coreResponse.error)
     }
 
-    if (!coreQueryData) {
+    if (!coreResponse.data) {
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    return res.status(200).json(toCamelCase(coreQueryData))
+    return res.status(200).json(toCamelCase(coreResponse.data))
 }
 
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -62,35 +62,35 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
 
     const coreQuery = CoreModel.getCore({ id: String(coreId) })
     const coreUsersQuery = CoreModel.getUsersFromCore(String(coreId))
-    const { data: userCoresQueryData, error: userCoresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
+    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
 
-    if (userCoresQueryError) {
-        return next(userCoresQueryError)
+    if (userCoresResponse.error) {
+        return next(userCoresResponse.error)
     }
 
-    if (userCoresQueryData && !userCoresQueryData.find((core: any) => core.id === coreId)) {
+    if (userCoresResponse.data && !userCoresResponse.data.find((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
-    const { data: coreQueryData, error: coreQueryError } = await coreQuery
+    const coreResponse = await coreQuery
 
-    if (coreQueryError) {
-        return next(coreQueryError)
+    if (coreResponse.error) {
+        return next(coreResponse.error)
     }
 
-    if (!coreQueryData) {
+    if (!coreResponse.data) {
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    const { data: coreUsersQueryData, error: coreUsersQueryError } = await coreUsersQuery
+    const coreUsersResponse = await coreUsersQuery
 
-    if (coreUsersQueryError) {
-        return next(coreUsersQueryError)
+    if (coreUsersResponse.error) {
+        return next(coreUsersResponse.error)
     }
 
-    const coreUsers = coreUsersQueryData?.map((user: any) => toCamelCase(user)) ?? []
+    const coreUsers = coreUsersResponse.data?.map((user: any) => toCamelCase(user)) ?? []
 
-    return res.status(200).json({ ...toCamelCase(coreQueryData), users: coreUsers })
+    return res.status(200).json({ ...toCamelCase(coreResponse.data), users: coreUsers })
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -102,33 +102,33 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
 
     const newCore = result.data
 
-    const { data: newCoreQueryData, error: newCoreQueryError } = await CoreModel.saveCore(newCore)
+    const newCoreResponse = await CoreModel.saveCore(newCore)
 
-    if (newCoreQueryError) {
-        return next(newCoreQueryError)
+    if (newCoreResponse.error) {
+        return next(newCoreResponse.error)
     }
 
-    if (!newCoreQueryData) {
+    if (!newCoreResponse.data) {
         return next(new HttpError(500, 'No se pudo crear el nucleo'))
     }
 
-    if (!newCoreQueryData.id) {
+    if (!newCoreResponse.data.id) {
         return next(new HttpError(500, 'No se pudo obtener el identificador del nucleo'))
     }
 
-    const { data: newCoreUserQueryData, error: newCoreUserQueryError } = await CoreModel.addUserToCore(newCoreQueryData.id, req.payload.id, '6e17aa28-2e12-4b9f-81da-6d3dc1f4ff03')
+    const newCoreUserResponse = await CoreModel.addUserToCore(newCoreResponse.data.id, req.payload.id, '6e17aa28-2e12-4b9f-81da-6d3dc1f4ff03')
 
-    if (newCoreUserQueryError) {
-        return next(newCoreUserQueryError)
+    if (newCoreUserResponse.error) {
+        return next(newCoreUserResponse.error)
     }
 
-    if (!newCoreUserQueryData) {
+    if (!newCoreUserResponse.data) {
         return next(new HttpError(500, 'No se pudo obtener la informacion'))
     }
 
     return res.status(201).json({
-        newCore: toCamelCase(newCoreQueryData),
-        newCoreUser: toCamelCase(newCoreUserQueryData)
+        newCore: toCamelCase(newCoreResponse.data),
+        newCoreUser: toCamelCase(newCoreUserResponse.data)
     })
 }
 
@@ -142,13 +142,13 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     const { id: coreId } = result.data
     const { id: hostId } = req.payload
 
-    const { data: coresQueryData, error: coresQueryError } = await CoreModel.getCoresByUserId(req.payload.id)
+    const coresResponse = await CoreModel.getCoresByUserId(req.payload.id)
 
-    if (coresQueryError) {
-        return next(coresQueryError)
+    if (coresResponse.error) {
+        return next(coresResponse.error)
     }
 
-    if (coresQueryData && !coresQueryData.some((core: any) => core.id === coreId)) {
+    if (coresResponse.data && !coresResponse.data.some((core: any) => core.id === coreId)) {
         return next(new HttpError(401, 'No autorizado'))
     }
 
@@ -182,25 +182,25 @@ async function decodeInvitationToCore(req: Request, res: Response, next: NextFun
     const coreQuery = CoreModel.getCore({ id: verified.decoded.coreId })
 
     const [
-        { data: userQueryData, error: userQueryError },
-        { data: coreQueryData, error: coreQueryError }
+        userResponse,
+        coreResponse
     ] = await Promise.all([userQuery, coreQuery])
 
-    if (userQueryError || coreQueryError) {
-        return next(userQueryError || coreQueryError)
+    if (userResponse.error || coreResponse.error) {
+        return next(userResponse.error || coreResponse.error)
     }
 
-    if (!userQueryData) {
+    if (!userResponse.data) {
         return next(new HttpError(500, 'No se pudo obtener el usuario'))
     }
 
-    if (!coreQueryData) {
+    if (!coreResponse.data) {
         return next(new HttpError(500, 'No se pudo obtener el nucleo'))
     }
 
     return res.status(200).json({
-        core: toCamelCase(coreQueryData),
-        hostUser: { ...toCamelCase(userQueryData), password: undefined }
+        core: toCamelCase(coreResponse.data),
+        hostUser: { ...toCamelCase(userResponse.data), password: undefined }
     })
 }
 
@@ -219,33 +219,33 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
         return next(new HttpError(401, 'Invitacion caducada o invalida'))
     }
 
-    const { data: coreQueryData, error: coreQueryError } = await CoreModel.getCore({ id: verified.decoded.coreId })
+    const coreResponse = await CoreModel.getCore({ id: verified.decoded.coreId })
 
-    if (coreQueryError) {
-        return next(coreQueryError)
+    if (coreResponse.error) {
+        return next(coreResponse.error)
     }
 
-    if (!coreQueryData) {
+    if (!coreResponse.data) {
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    if (!coreQueryData.id) {
+    if (!coreResponse.data.id) {
         return next(new HttpError(500, 'No se pudo obtener el identificador del nucleo'))
     }
 
-    const { data: newCoreUserQueryData, error: newCoreUserQueryError } = await CoreModel.addUserToCore(coreQueryData.id, guestId, '1b01156b-e6c2-458d-b488-12d44c38e1f3')
+    const newCoreUserResponse = await CoreModel.addUserToCore(coreResponse.data.id, guestId, '1b01156b-e6c2-458d-b488-12d44c38e1f3')
 
-    if (newCoreUserQueryError) {
-        return next(newCoreUserQueryError)
+    if (newCoreUserResponse.error) {
+        return next(newCoreUserResponse.error)
     }
 
-    if (!newCoreUserQueryData) {
+    if (!newCoreUserResponse.data) {
         return next(new HttpError(500, 'No se pudo obtener la informacion'))
     }
 
     return res.status(201).json({
-        core: toCamelCase(coreQueryData),
-        newCoreUser: toCamelCase(newCoreUserQueryData)
+        core: toCamelCase(coreResponse.data),
+        newCoreUser: toCamelCase(newCoreUserResponse.data)
     })
 }
 
