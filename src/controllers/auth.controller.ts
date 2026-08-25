@@ -19,10 +19,7 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
     const emailQuery = UserModel.getUser({ email: result.data.email })
     const usernameQuery = UserModel.getUser({ username: result.data.username })
 
-    const [
-        emailResponse,
-        usernameResponse
-    ] = await Promise.all([emailQuery, usernameQuery])
+    const [emailResponse, usernameResponse] = await Promise.all([emailQuery, usernameQuery])
 
     if (emailResponse.error || usernameResponse.error) {
         return next(emailResponse.error || usernameResponse.error)
