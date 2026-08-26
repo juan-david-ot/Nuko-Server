@@ -12,7 +12,7 @@ import { HttpError } from '../error-handler/http.error.ts'
 async function signUp(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await userSchema.safeParseAsync(req.body)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -57,7 +57,7 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await partialUserSchema.safeParseAsync(req.body)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -100,7 +100,7 @@ async function forgotPassword(req: Request, res: Response, next: NextFunction): 
             })
     }).safeParseAsync(req.body)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -177,7 +177,7 @@ async function resetPassword(req: Request, res: Response, next: NextFunction): P
             .min(8, 'La contraseña debe tener al menos 8 caracteres')
     }).safeParseAsync(req.body)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -259,7 +259,7 @@ async function changePassword(req: Request, res: Response, next: NextFunction): 
             .min(8, 'La contraseña debe tener al menos 8 caracteres')
     }).safeParseAsync(req.body)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 

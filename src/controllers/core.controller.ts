@@ -21,7 +21,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
 async function getUserCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -54,7 +54,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -96,7 +96,7 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
 async function createCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await coreSchema.safeParseAsync({ ...req.body, creatorId: req.payload.id })
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -135,7 +135,7 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -167,7 +167,7 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
 async function decodeInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ token: z.jwt() }).safeParseAsync(req.params)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
@@ -207,7 +207,7 @@ async function decodeInvitationToCore(req: Request, res: Response, next: NextFun
 async function acceptInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ token: z.jwt() }).safeParseAsync(req.params)
 
-    if (!result.success) {
+    if (result.error) {
         return next(result.error)
     }
 
