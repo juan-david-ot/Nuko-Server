@@ -104,12 +104,12 @@ async function getUsersFromCore(coreId: string): Promise<DBResponse<DBUser[]>> {
         .query(
             `
                 SELECT
-                    cu.joined_at,
                     u.id,
                     u.email,
                     u.username,
                     u.name,
-                    u.surname
+                    u.surname,
+                    cu.joined_at
                 FROM cores_users cu
                 INNER JOIN users u ON cu.user_id = u.id
                 WHERE cu.core_id = $1

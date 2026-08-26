@@ -181,10 +181,7 @@ async function decodeInvitationToCore(req: Request, res: Response, next: NextFun
     const userQuery = UserModel.getUser({ id: verified.decoded.hostId })
     const coreQuery = CoreModel.getCore({ id: verified.decoded.coreId })
 
-    const [
-        userResponse,
-        coreResponse
-    ] = await Promise.all([userQuery, coreQuery])
+    const [userResponse, coreResponse] = await Promise.all([userQuery, coreQuery])
 
     if (userResponse.error || coreResponse.error) {
         return next(userResponse.error || coreResponse.error)
@@ -200,7 +197,7 @@ async function decodeInvitationToCore(req: Request, res: Response, next: NextFun
 
     return res.status(200).json({
         core: toCamelCase(coreResponse.data),
-        hostUser: { ...toCamelCase(userResponse.data), password: undefined }
+        hostUser: { ...toCamelCase(userResponse.data), password: undefined, passwordChangedAt: undefined }
     })
 }
 

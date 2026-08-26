@@ -51,7 +51,7 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
 
     console.log(sendEmailResult.data)
 
-    return res.status(201).json({ ...toCamelCase(newUserResponse.data), password: undefined })
+    return res.status(201).json({ ...toCamelCase(newUserResponse.data), password: undefined, passwordChangedAt: undefined })
 }
 
 async function logIn(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -234,7 +234,7 @@ async function resetPassword(req: Request, res: Response, next: NextFunction): P
 
         console.log(sendEmailResult.data)
 
-        return res.status(200).json({ ...toCamelCase(updateUserResponse.data), password: undefined })
+        return res.status(200).json({ ...toCamelCase(updateUserResponse.data), password: undefined, passwordChangedAt: undefined })
     }
     else {
         return next(new HttpError(400, 'El enlace no es válido o ha expirado. Solicita uno nuevo.'))
