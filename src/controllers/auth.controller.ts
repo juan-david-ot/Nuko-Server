@@ -75,10 +75,12 @@ async function logIn(req: Request, res: Response, next: NextFunction): Promise<R
 
     if (userResponse.data && (await bcrypt.compare(password, userResponse.data.password))) {
         const payload = { id: userResponse.data.id, email: userResponse.data.email, username: userResponse.data.username, name: userResponse.data.name }
+        const isMobile = req.headers['x-client-platform'] === 'ios' || req.headers['x-client-platform'] === 'android'
+        const expiresIn = isMobile ? '7d' : '6h'
         const authToken = jwt.sign(
             payload,
             String(process.env.AUTH_TOKEN_SECRET),
-            { algorithm: 'HS256', expiresIn: '4h' }
+            { algorithm: 'HS256', expiresIn }
         )
         return res.status(200).json({ authToken })
     }
@@ -298,10 +300,12 @@ async function changePassword(req: Request, res: Response, next: NextFunction): 
         console.log(sendEmailResult.data)
 
         const payload = { id: updateUserResponse.data.id, email: updateUserResponse.data.email, username: updateUserResponse.data.username, name: updateUserResponse.data.name }
+        const isMobile = req.headers['x-client-platform'] === 'ios' || req.headers['x-client-platform'] === 'android'
+        const expiresIn = isMobile ? '7d' : '6h'
         const authToken = jwt.sign(
             payload,
             String(process.env.AUTH_TOKEN_SECRET),
-            { algorithm: 'HS256', expiresIn: '4h' }
+            { algorithm: 'HS256', expiresIn }
         )
         return res.status(200).json({ authToken })
     }
