@@ -40,9 +40,10 @@ async function getCoresByUserId(userId: string): Promise<DBResponse<DBCore[]>> {
     return pg
         .query(
             `
-                SELECT c.id, c.name, c.creator_id, c.created_at
+                SELECT c.id, c.name, c.creator_id, c.created_at, r.name as role
                 FROM cores_users cu
                 INNER JOIN cores c ON cu.core_id = c.id
+                INNER JOIN roles r ON cu.role_id = r.id
                 WHERE cu.user_id = $1
             `,
             [userId]
@@ -99,6 +100,20 @@ async function saveCore(newCore: Core): Promise<DBResponse<DBCore>> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function deleteCore(coreId: string): Promise<DBResponse<DBCore>> {
+    return pg
+        .query(
+            `
+                DELETE FROM cores
+                WHERE id = $1
+                RETURNING *
+            `,
+            [coreId]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
+}
+
 async function getUsersFromCore(coreId: string): Promise<DBResponse<DBUser[]>> {
     return pg
         .query(
@@ -109,9 +124,11 @@ async function getUsersFromCore(coreId: string): Promise<DBResponse<DBUser[]>> {
                     u.username,
                     u.name,
                     u.surname,
-                    cu.joined_at
+                    cu.joined_at,
+                    r.name as role
                 FROM cores_users cu
                 INNER JOIN users u ON cu.user_id = u.id
+                INNER JOIN roles r ON cu.role_id = r.id
                 WHERE cu.core_id = $1
             `,
             [coreId]
@@ -134,11 +151,27 @@ async function addUserToCore(coreId: string, userId: string, roleId: string): Pr
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function removeUserFromCore(coreId: string, userId: string): Promise<DBResponse<DBCoreUser>> {
+    return pg
+        .query(
+            `
+                DELETE FROM cores_users
+                WHERE core_id = $1 AND user_id = $2
+                RETURNING *
+            `,
+            [coreId, userId]
+        )
+        .then((result) => ({ data: result.rows[0], error: null }))
+        .catch((error) => ({ data: null, error: new DBError(error) }))
+}
+
 export {
     getCores,
     getCoresByUserId,
     getCore,
     saveCore,
+    deleteCore,
     getUsersFromCore,
-    addUserToCore
+    addUserToCore,
+    removeUserFromCore
 }

@@ -42,6 +42,9 @@ const userSchema = z.object({
         .optional(),
     passwordChangedAt: z
         .date()
+        .optional(),
+    role: z
+        .string()
         .optional()
 })
 

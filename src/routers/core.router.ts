@@ -18,4 +18,6 @@ router.get('/invitation/:token', requireAuth, CoreController.decodeInvitationToC
 
 router.post('/invitation/:token', requireAuth, CoreController.acceptInvitationToCore)
 
+router.delete('/:id/leave', requireAuth, CoreController.leaveCore)
+
 export default router

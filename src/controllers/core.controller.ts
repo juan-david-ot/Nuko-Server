@@ -27,7 +27,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
 
     const { id: coreId } = result.data
 
-    const coreQuery = CoreModel.getCore({ id: String(coreId) })
+    const coreQuery = CoreModel.getCore({ id: coreId })
     const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
 
     if (userCoresResponse.error) {
@@ -60,8 +60,8 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
 
     const { id: coreId } = result.data
 
-    const coreQuery = CoreModel.getCore({ id: String(coreId) })
-    const coreUsersQuery = CoreModel.getUsersFromCore(String(coreId))
+    const coreQuery = CoreModel.getCore({ id: coreId })
+    const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
     const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
 
     if (userCoresResponse.error) {
@@ -246,6 +246,78 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
     })
 }
 
+async function leaveCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+
+    if (result.error) {
+        return next(result.error)
+    }
+
+    const { id: coreId } = result.data
+
+    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
+    const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
+
+    if (userCoresResponse.error) {
+        return next(userCoresResponse.error)
+    }
+
+    if (!userCoresResponse.data) {
+        return next(new HttpError(500, 'No se pudo obtener la informacion'))
+    }
+
+    if (!userCoresResponse.data.find((core: any) => core.id === coreId)) {
+        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
+    }
+
+    const coreUsersResponse = await coreUsersQuery
+
+    if (coreUsersResponse.error) {
+        return next(coreUsersResponse.error)
+    }
+
+    if (!coreUsersResponse.data) {
+        return next(new HttpError(500, 'No se pudo obtener la informacion'))
+    }
+
+    const currentUser = coreUsersResponse.data.find((user: any) => user.id === req.payload.id)
+
+    if (!currentUser) {
+        return next(new HttpError(404, 'Usuario no encontrado en el nucleo'))
+    }
+
+    if (currentUser.role === 'admin' && coreUsersResponse.data.length !== 1 && !coreUsersResponse.data.some((user: any) => user.role === 'admin' && user.id !== req.payload.id)) {
+        return next(new HttpError(400, 'No puedes abandonar un nucleo sin dejar otro administrador'))
+    }
+
+    const removeUserFromCoreResponse = await CoreModel.removeUserFromCore(coreId, req.payload.id)
+
+    if (removeUserFromCoreResponse.error) {
+        return next(removeUserFromCoreResponse.error)
+    }
+
+    const remainingCoreUsersResponse = await CoreModel.getUsersFromCore(coreId)
+
+    if (remainingCoreUsersResponse.error) {
+        return next(remainingCoreUsersResponse.error)
+    }
+
+    if (!remainingCoreUsersResponse.data || remainingCoreUsersResponse.data.length === 0) {
+        const deleteCoreResponse = await CoreModel.deleteCore(coreId)
+
+        if (deleteCoreResponse.error) {
+            return next(deleteCoreResponse.error)
+        }
+
+        console.log(deleteCoreResponse.data)
+    }
+
+    return res.status(200).json({
+        message: 'Has abandonado el nucleo correctamente',
+        coreId
+    })
+}
+
 export {
     getUserCores,
     getUserCoreById,
@@ -253,5 +325,6 @@ export {
     createCore,
     createInvitationToCore,
     decodeInvitationToCore,
-    acceptInvitationToCore
+    acceptInvitationToCore,
+    leaveCore
 }
