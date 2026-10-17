@@ -20,7 +20,7 @@
         "jsonwebtoken": "9.0.3",
         "morgan": "1.12.1",
         "pg": "8.23.1",
-        "resend": "6.33.0",
+        "resend": "6.34.1",
         "socket.io": "4.8.4",
         "zod": "4.6.7"
     },
