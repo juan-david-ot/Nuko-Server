@@ -4,6 +4,7 @@ import { coreSchema, partialCoreSchema } from '../schemas/core.schema.ts'
 import { coreUserSchema, partialCoreUserSchema } from '../schemas/core-user.schema.ts'
 import { partialRoleSchema, roleSchema } from '../schemas/role.schema.ts'
 import { DBError } from '../error-handler/db.error.ts'
+import type { partialTaskListSchema, taskListSchema } from '../schemas/task-list.schema.ts'
 
 export type DBResponse<T> = {
     data: T | null
@@ -32,6 +33,11 @@ export type Core = z.infer<typeof coreSchema>
 export type PartialCore = z.infer<typeof partialCoreSchema>
 export type DBCore = DBType<Core>
 export type DBPartialCore = DBType<PartialCore>
+
+export type TaskList = z.infer<typeof taskListSchema>
+export type PartialTaskList = z.infer<typeof partialTaskListSchema>
+export type DBTaskList = DBType<TaskList>
+export type DBPartialTaskList = DBType<PartialTaskList>
 
 export type Role = z.infer<typeof roleSchema>
 export type PartialRole = z.infer<typeof partialRoleSchema>
