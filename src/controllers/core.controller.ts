@@ -126,6 +126,8 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
         return next(new HttpError(500, 'No se pudo obtener la informacion'))
     }
 
+    // TODO: crear listas del nucleo por defecto (lista de tareas, lista de compras, etc.)
+
     return res.status(201).json({
         newCore: toCamelCase(newCoreResponse.data),
         newCoreUser: toCamelCase(newCoreUserResponse.data)
