@@ -37,18 +37,17 @@ async function getPasswordReset(passwordReset: PasswordReset): Promise<DBRespons
 }
 
 async function savePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
-    const query = `
-        INSERT INTO password_reset_tokens (
-            user_id,
-            token_hash,
-            expires_at
-        )
-        VALUES ($1, $2, $3)
-        RETURNING *
-    `
     return pg
         .query(
-            query,
+            `
+                INSERT INTO password_reset_tokens (
+                    user_id,
+                    token_hash,
+                    expires_at
+                )
+                VALUES ($1, $2, $3)
+                RETURNING *
+            `,
             [
                 passwordReset.userId,
                 passwordReset.tokenHash,

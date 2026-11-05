@@ -103,20 +103,19 @@ async function getUser(searchUser: PartialUser): Promise<DBResponse<DBUser>> {
 }
 
 async function saveUser(newUser: User): Promise<DBResponse<DBUser>> {
-    const query = `
-        INSERT INTO users (
-            email,
-            username,
-            password,
-            name,
-            surname
-        )
-        VALUES ($1, $2, $3, $4, $5)
-        RETURNING *
-    `
     return pg
         .query(
-            query,
+            `
+                INSERT INTO users (
+                    email,
+                    username,
+                    password,
+                    name,
+                    surname
+                )
+                VALUES ($1, $2, $3, $4, $5)
+                RETURNING *
+            `,
             [
                 newUser.email,
                 newUser.username,
