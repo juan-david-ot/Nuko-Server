@@ -7,25 +7,25 @@ async function getCores(searchCore: PartialCore): Promise<DBResponse<DBCore[]>> 
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (searchCore.id) {
+    if (searchCore.id !== undefined) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
         values.push(searchCore.id)
         isFirstCondition = false
     }
 
-    if (searchCore.name) {
+    if (searchCore.name !== undefined) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} name = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}name = $${values.length + 1}`
         )
         values.push(searchCore.name)
         isFirstCondition = false
     }
 
-    if (searchCore.creatorId) {
+    if (searchCore.creatorId !== undefined) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} creator_id = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}creator_id = $${values.length + 1}`
         )
         values.push(searchCore.creatorId)
     }
@@ -57,25 +57,25 @@ async function getCore(searchCore: PartialCore): Promise<DBResponse<DBCore>> {
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (searchCore.id) {
+    if (searchCore.id !== undefined) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} id = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
         values.push(searchCore.id)
         isFirstCondition = false
     }
 
-    if (searchCore.name) {
+    if (searchCore.name !== undefined) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} name = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}name = $${values.length + 1}`
         )
         values.push(searchCore.name)
         isFirstCondition = false
     }
 
-    if (searchCore.creatorId) {
+    if (searchCore.creatorId !== undefined) {
         query = query.concat(
-            `${isFirstCondition ? ' WHERE ' : ' AND '} creator_id = $${values.length + 1}`
+            `${isFirstCondition ? ' WHERE ' : ' AND '}creator_id = $${values.length + 1}`
         )
         values.push(searchCore.creatorId)
     }

@@ -7,7 +7,7 @@ async function getPasswordReset(searchPasswordReset: PasswordReset): Promise<DBR
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (searchPasswordReset.id) {
+    if (searchPasswordReset.id !== undefined) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
@@ -15,7 +15,7 @@ async function getPasswordReset(searchPasswordReset: PasswordReset): Promise<DBR
         isFirstCondition = false
     }
 
-    if (searchPasswordReset.userId) {
+    if (searchPasswordReset.userId !== undefined) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}user_id = $${values.length + 1}`
         )
@@ -23,7 +23,7 @@ async function getPasswordReset(searchPasswordReset: PasswordReset): Promise<DBR
         isFirstCondition = false
     }
 
-    if (searchPasswordReset.tokenHash) {
+    if (searchPasswordReset.tokenHash !== undefined) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}token_hash = $${values.length + 1}`
         )
@@ -63,19 +63,19 @@ async function updatePasswordReset(updatedPasswordReset: PasswordReset): Promise
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (updatedPasswordReset.userId) {
+    if (updatedPasswordReset.userId !== undefined) {
         query = query.concat(` user_id = $${values.length + 1}`)
         values.push(updatedPasswordReset.userId)
         isFirstCondition = false
     }
 
-    if (updatedPasswordReset.tokenHash) {
+    if (updatedPasswordReset.tokenHash !== undefined) {
         query = query.concat(`${isFirstCondition ? ' ' : ' , '}token_hash = $${values.length + 1}`)
         values.push(updatedPasswordReset.tokenHash)
         isFirstCondition = false
     }
 
-    if (updatedPasswordReset.expiresAt) {
+    if (updatedPasswordReset.expiresAt !== undefined) {
         query = query.concat(`${isFirstCondition ? ' ' : ' , '}expires_at = $${values.length + 1}`)
         values.push(updatedPasswordReset.expiresAt)
     }
@@ -93,7 +93,7 @@ async function deletePasswordReset(deletedPasswordReset: PasswordReset): Promise
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (deletedPasswordReset.id) {
+    if (deletedPasswordReset.id !== undefined) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
@@ -101,7 +101,7 @@ async function deletePasswordReset(deletedPasswordReset: PasswordReset): Promise
         isFirstCondition = false
     }
 
-    if (deletedPasswordReset.userId) {
+    if (deletedPasswordReset.userId !== undefined) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}user_id = $${values.length + 1}`
         )
