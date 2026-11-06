@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { coreSchema } from '../schemas/core.schema.ts'
-import { CoreModel, UserModel } from '../models/index.ts'
+import { CoreModel, TaskListModel, UserModel } from '../models/index.ts'
 import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
@@ -126,7 +126,16 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
         return next(new HttpError(500, 'No se pudo obtener la informacion'))
     }
 
-    // TODO: crear listas del nucleo por defecto (lista de tareas, lista de compras, etc.)
+    const todoListQuery = TaskListModel.saveTaskList({ coreId: newCoreResponse.data.id, name: 'Lista de Tareas', creatorId: req.payload.id })
+    const shoppingListQuery = TaskListModel.saveTaskList({ coreId: newCoreResponse.data.id, name: 'Lista de la Compra', creatorId: req.payload.id })
+
+    const [todoListResponse, shoppingListResponse] = await Promise.all([todoListQuery, shoppingListQuery])
+
+    if (todoListResponse.error || shoppingListResponse.error) {
+        console.log(todoListResponse.error || shoppingListResponse.error)
+    }
+
+    console.log({ todoList: todoListResponse, shoppingList: shoppingListResponse })
 
     return res.status(201).json({
         newCore: toCamelCase(newCoreResponse.data),
