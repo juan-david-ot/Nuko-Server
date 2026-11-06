@@ -18,8 +18,7 @@ const taskListSchema = z.object({
         .trim()
         .optional(),
     position: z
-        .int()
-        .positive()
+        .number()
         .optional(),
     creatorId: z.uuid({ error: 'El creator ID debe ser un UUID valido' }),
     archivedAt: z
