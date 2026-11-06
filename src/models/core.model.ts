@@ -100,6 +100,10 @@ async function saveCore(newCore: Core): Promise<DBResponse<DBCore>> {
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function updateCore() {
+
+}
+
 async function deleteCore(coreId: string): Promise<DBResponse<DBCore>> {
     return pg
         .query(
@@ -151,7 +155,11 @@ async function addUserToCore(coreId: string, userId: string, roleId: string): Pr
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function removeUserFromCore(coreId: string, userId: string): Promise<DBResponse<DBCoreUser>> {
+async function updateUserInCore() {
+
+}
+
+async function deleteUserFromCore(coreId: string, userId: string): Promise<DBResponse<DBCoreUser>> {
     return pg
         .query(
             `
@@ -170,8 +178,10 @@ export {
     getCoresByUserId,
     getCore,
     saveCore,
+    updateCore,
     deleteCore,
     getUsersFromCore,
     addUserToCore,
-    removeUserFromCore
+    updateUserInCore,
+    deleteUserFromCore
 }

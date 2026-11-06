@@ -2,32 +2,32 @@ import type { DBPasswordReset, DBResponse, PasswordReset } from '../definitions/
 import pg from '../db/index.ts'
 import { DBError } from '../error-handler/db.error.ts'
 
-async function getPasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
+async function getPasswordReset(searchPasswordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     let query = 'SELECT * FROM password_reset_tokens'
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (passwordReset.id) {
+    if (searchPasswordReset.id) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
-        values.push(passwordReset.id)
+        values.push(searchPasswordReset.id)
         isFirstCondition = false
     }
 
-    if (passwordReset.userId) {
+    if (searchPasswordReset.userId) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}user_id = $${values.length + 1}`
         )
-        values.push(passwordReset.userId)
+        values.push(searchPasswordReset.userId)
         isFirstCondition = false
     }
 
-    if (passwordReset.tokenHash) {
+    if (searchPasswordReset.tokenHash) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}token_hash = $${values.length + 1}`
         )
-        values.push(passwordReset.tokenHash)
+        values.push(searchPasswordReset.tokenHash)
     }
 
     return pg
@@ -36,7 +36,7 @@ async function getPasswordReset(passwordReset: PasswordReset): Promise<DBRespons
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function savePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
+async function savePasswordReset(newPasswordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     return pg
         .query(
             `
@@ -49,38 +49,38 @@ async function savePasswordReset(passwordReset: PasswordReset): Promise<DBRespon
                 RETURNING *
             `,
             [
-                passwordReset.userId,
-                passwordReset.tokenHash,
-                passwordReset.expiresAt
+                newPasswordReset.userId,
+                newPasswordReset.tokenHash,
+                newPasswordReset.expiresAt
             ]
         )
         .then((result) => ({ data: result.rows[0], error: null }))
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function updatePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
+async function updatePasswordReset(updatedPasswordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     let query = 'UPDATE password_reset_tokens SET'
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (passwordReset.userId) {
+    if (updatedPasswordReset.userId) {
         query = query.concat(` user_id = $${values.length + 1}`)
-        values.push(passwordReset.userId)
+        values.push(updatedPasswordReset.userId)
         isFirstCondition = false
     }
 
-    if (passwordReset.tokenHash) {
+    if (updatedPasswordReset.tokenHash) {
         query = query.concat(`${isFirstCondition ? ' ' : ' , '}token_hash = $${values.length + 1}`)
-        values.push(passwordReset.tokenHash)
+        values.push(updatedPasswordReset.tokenHash)
         isFirstCondition = false
     }
 
-    if (passwordReset.expiresAt) {
+    if (updatedPasswordReset.expiresAt) {
         query = query.concat(`${isFirstCondition ? ' ' : ' , '}expires_at = $${values.length + 1}`)
-        values.push(passwordReset.expiresAt)
+        values.push(updatedPasswordReset.expiresAt)
     }
 
-    values.push(passwordReset.id)
+    values.push(updatedPasswordReset.id)
 
     return pg
         .query(`${query} WHERE id = $${values.length} RETURNING *`, values)
@@ -88,24 +88,24 @@ async function updatePasswordReset(passwordReset: PasswordReset): Promise<DBResp
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
-async function deletePasswordReset(passwordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
+async function deletePasswordReset(deletedPasswordReset: PasswordReset): Promise<DBResponse<DBPasswordReset>> {
     let query = 'DELETE FROM password_reset_tokens'
     const values: unknown[] = []
     let isFirstCondition = true
 
-    if (passwordReset.id) {
+    if (deletedPasswordReset.id) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}id = $${values.length + 1}`
         )
-        values.push(passwordReset.id)
+        values.push(deletedPasswordReset.id)
         isFirstCondition = false
     }
 
-    if (passwordReset.userId) {
+    if (deletedPasswordReset.userId) {
         query = query.concat(
             `${isFirstCondition ? ' WHERE ' : ' AND '}user_id = $${values.length + 1}`
         )
-        values.push(passwordReset.userId)
+        values.push(deletedPasswordReset.userId)
     }
 
     return pg

@@ -301,10 +301,10 @@ async function leaveCore(req: Request, res: Response, next: NextFunction): Promi
         return next(new HttpError(400, 'No puedes abandonar un nucleo sin dejar otro administrador'))
     }
 
-    const removeUserFromCoreResponse = await CoreModel.removeUserFromCore(coreId, req.payload.id)
+    const deleteUserFromCoreResponse = await CoreModel.deleteUserFromCore(coreId, req.payload.id)
 
-    if (removeUserFromCoreResponse.error) {
-        return next(removeUserFromCoreResponse.error)
+    if (deleteUserFromCoreResponse.error) {
+        return next(deleteUserFromCoreResponse.error)
     }
 
     const remainingCoreUsersResponse = await CoreModel.getUsersFromCore(coreId)

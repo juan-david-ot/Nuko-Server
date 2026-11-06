@@ -2,6 +2,18 @@ import pg from '../db/index.ts'
 import type { DBResponse, DBTaskList, TaskList } from '../definitions/types.ts'
 import { DBError } from '../error-handler/db.error.ts'
 
+async function getTaskLists() {
+
+}
+
+async function getTaskListsByCoreId() {
+
+}
+
+async function getTaskList() {
+
+}
+
 async function saveTaskList(newTaskList: TaskList): Promise<DBResponse<DBTaskList>> {
     return pg
         .query(
@@ -28,6 +40,19 @@ async function saveTaskList(newTaskList: TaskList): Promise<DBResponse<DBTaskLis
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function updateTaskList() {
+
+}
+
+async function deleteTaskList() {
+
+}
+
 export {
-    saveTaskList
+    getTaskLists,
+    getTaskListsByCoreId,
+    getTaskList,
+    saveTaskList,
+    updateTaskList,
+    deleteTaskList
 }

@@ -176,9 +176,14 @@ async function updateUser(updateUser: PartialUser): Promise<DBResponse<DBUser>> 
         .catch((error) => ({ data: null, error: new DBError(error) }))
 }
 
+async function deleteUser() {
+
+}
+
 export {
     getUsers,
     getUser,
     saveUser,
-    updateUser
+    updateUser,
+    deleteUser
 }
