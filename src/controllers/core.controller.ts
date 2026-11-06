@@ -48,7 +48,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
         return next(new HttpError(404, 'Nucleo no encontrado'))
     }
 
-    return res.status(200).json(toCamelCase(coreResponse.data))
+    return res.status(200).json({ ...toCamelCase(coreResponse.data) })
 }
 
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
