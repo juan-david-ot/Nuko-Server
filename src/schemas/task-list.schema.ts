@@ -24,6 +24,9 @@ const taskListSchema = z.object({
     archivedAt: z
         .date()
         .optional(),
+    isArchived: z
+        .boolean()
+        .optional(),
     createdAt: z
         .date()
         .optional()
