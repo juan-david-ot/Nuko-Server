@@ -4,15 +4,15 @@ import { AuthController } from '../controllers/index.ts'
 
 const router = express.Router()
 
-router.post('/signUp', AuthController.signUp)
+router.post('/sign-up', AuthController.signUp)
 
-router.post('/logIn', AuthController.logIn)
+router.post('/log-in', AuthController.logIn)
 
-router.post('/forgotPassword', AuthController.forgotPassword)
+router.post('/forgot-password', AuthController.forgotPassword)
 
-router.post('/resetPassword', AuthController.resetPassword)
+router.post('/reset-password', AuthController.resetPassword)
 
-router.post('/changePassword', requireAuth, AuthController.changePassword)
+router.post('/change-password', requireAuth, AuthController.changePassword)
 
 router.get('/verify', requireAuth, AuthController.verify)
 

@@ -8,5 +8,5 @@ export default (app: Express): void => {
     app.use('/auth', authRouter)
     app.use('/users', userRouter)
     app.use('/cores', coreRouter)
-    app.use('/taskLists', taskListRouter)
+    app.use('/task-lists', taskListRouter)
 }
