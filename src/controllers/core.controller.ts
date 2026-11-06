@@ -132,7 +132,7 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
     const [todoListResponse, shoppingListResponse] = await Promise.all([todoListQuery, shoppingListQuery])
 
     if (todoListResponse.error || shoppingListResponse.error) {
-        console.log(todoListResponse.error || shoppingListResponse.error)
+        console.error(todoListResponse.error || shoppingListResponse.error)
     }
 
     console.log({ todoList: todoListResponse, shoppingList: shoppingListResponse })

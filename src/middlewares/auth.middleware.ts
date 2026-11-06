@@ -34,8 +34,6 @@ async function verifyExpiration(req: Request, res: Response, next: NextFunction)
     if (userQueryData.password_changed_at) {
         const passwordChangedAtSeconds = Math.floor(userQueryData.password_changed_at.getTime() / 1000)
 
-        console.log(iat, passwordChangedAtSeconds)
-
         if (iat < passwordChangedAtSeconds) {
             return next(new HttpError(401, 'La sesión ha expirado, inicia sesión de nuevo'))
         }
