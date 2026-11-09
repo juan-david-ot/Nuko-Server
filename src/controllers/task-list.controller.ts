@@ -1,7 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
 import z from 'zod'
 import { taskListSchema } from '../schemas/task-list.schema.ts'
-import { CoreModel, TaskListModel } from '../models/index.ts'
+import { TaskListModel } from '../models/index.ts'
+import coreService from '../services/core.service.ts'
 import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
@@ -14,13 +15,9 @@ async function getTaskListsByCoreId(req: Request, res: Response, next: NextFunct
 
     const { coreId } = result.data
 
-    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
+    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
 
-    if (userCoresResponse.error) {
-        return next(userCoresResponse.error)
-    }
-
-    if (userCoresResponse.data && !userCoresResponse.data.find((core: any) => core.id === coreId)) {
+    if (!isUserInCore) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
@@ -41,14 +38,9 @@ async function createTaskList(req: Request, res: Response, next: NextFunction): 
     }
 
     const newTaskList = result.data
+    const isUserInCore = await coreService.isUserInCore(req.payload.id, newTaskList.coreId)
 
-    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
-
-    if (userCoresResponse.error) {
-        return next(userCoresResponse.error)
-    }
-
-    if (userCoresResponse.data && !userCoresResponse.data.find((core: any) => core.id === newTaskList.coreId)) {
+    if (!isUserInCore) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 

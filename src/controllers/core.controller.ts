@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { coreSchema } from '../schemas/core.schema.ts'
 import { CoreModel, TaskListModel, UserModel } from '../models/index.ts'
+import coreService from '../services/core.service.ts'
 import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
@@ -28,13 +29,9 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
     const { id: coreId } = result.data
 
     const coreQuery = CoreModel.getCore({ id: coreId })
-    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
+    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
 
-    if (userCoresResponse.error) {
-        return next(userCoresResponse.error)
-    }
-
-    if (userCoresResponse.data && !userCoresResponse.data.find((core: any) => core.id === coreId)) {
+    if (!isUserInCore) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
@@ -62,13 +59,9 @@ async function getUserCoreInformationById(req: Request, res: Response, next: Nex
 
     const coreQuery = CoreModel.getCore({ id: coreId })
     const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
-    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
+    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
 
-    if (userCoresResponse.error) {
-        return next(userCoresResponse.error)
-    }
-
-    if (userCoresResponse.data && !userCoresResponse.data.find((core: any) => core.id === coreId)) {
+    if (!isUserInCore) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
@@ -153,14 +146,10 @@ async function createInvitationToCore(req: Request, res: Response, next: NextFun
     const { id: coreId } = result.data
     const { id: hostId } = req.payload
 
-    const coresResponse = await CoreModel.getCoresByUserId(req.payload.id)
+    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
 
-    if (coresResponse.error) {
-        return next(coresResponse.error)
-    }
-
-    if (coresResponse.data && !coresResponse.data.some((core: any) => core.id === coreId)) {
-        return next(new HttpError(401, 'No autorizado'))
+    if (!isUserInCore) {
+        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
     const payload = { hostId, coreId }
@@ -266,18 +255,10 @@ async function leaveCore(req: Request, res: Response, next: NextFunction): Promi
 
     const { id: coreId } = result.data
 
-    const userCoresResponse = await CoreModel.getCoresByUserId(req.payload.id)
     const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
+    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
 
-    if (userCoresResponse.error) {
-        return next(userCoresResponse.error)
-    }
-
-    if (!userCoresResponse.data) {
-        return next(new HttpError(500, 'No se pudo obtener la informacion'))
-    }
-
-    if (!userCoresResponse.data.find((core: any) => core.id === coreId)) {
+    if (!isUserInCore) {
         return next(new HttpError(401, 'No tienes acceso a este nucleo'))
     }
 
