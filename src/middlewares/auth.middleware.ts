@@ -39,7 +39,7 @@ async function verifyExpiration(req: Request, res: Response, next: NextFunction)
         }
     }
 
-    next()
+    return next()
 }
 
 const requireAuth = [verifyToken, verifyExpiration]
