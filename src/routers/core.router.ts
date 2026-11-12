@@ -9,7 +9,7 @@ router.get('/', requireAuth, CoreController.getUserCores)
 
 router.get('/:coreId', requireAuth, isUserInCore, CoreController.getCoreById)
 
-router.get('/:coreId/information', requireAuth, isUserInCore, CoreController.getCoreInformationById)
+router.get('/:coreId/users', requireAuth, isUserInCore, CoreController.getCoreUsersById)
 
 router.post('/', requireAuth, CoreController.createCore)
 
@@ -19,6 +19,6 @@ router.get('/invitation/:token', requireAuth, CoreController.decodeInvitationToC
 
 router.post('/invitation/:token', requireAuth, CoreController.acceptInvitationToCore)
 
-router.delete('/:coreId/leave', requireAuth, isUserInCore, CoreController.leaveCore)
+router.delete('/:coreId/leave', requireAuth, isUserInCore, CoreController.leaveCoreById)
 
 export default router

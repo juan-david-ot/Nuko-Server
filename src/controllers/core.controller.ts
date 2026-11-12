@@ -40,7 +40,7 @@ async function getCoreById(req: Request, res: Response, next: NextFunction): Pro
     return res.status(200).json({ ...toCamelCase(coreResponse.data) })
 }
 
-async function getCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+async function getCoreUsersById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
@@ -49,18 +49,7 @@ async function getCoreInformationById(req: Request, res: Response, next: NextFun
 
     const { coreId } = result.data
 
-    const coreQuery = CoreModel.getCore({ id: coreId })
     const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
-
-    const coreResponse = await coreQuery
-
-    if (coreResponse.error) {
-        return next(coreResponse.error)
-    }
-
-    if (!coreResponse.data) {
-        return next(new HttpError(404, 'Nucleo no encontrado'))
-    }
 
     const coreUsersResponse = await coreUsersQuery
 
@@ -70,7 +59,7 @@ async function getCoreInformationById(req: Request, res: Response, next: NextFun
 
     const coreUsers = coreUsersResponse.data?.map((user: any) => toCamelCase(user)) ?? []
 
-    return res.status(200).json({ ...toCamelCase(coreResponse.data), users: coreUsers })
+    return res.status(200).json(coreUsers)
 }
 
 async function createCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
@@ -227,7 +216,7 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
     })
 }
 
-async function leaveCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+async function leaveCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
@@ -287,10 +276,10 @@ async function leaveCore(req: Request, res: Response, next: NextFunction): Promi
 export {
     getUserCores,
     getCoreById,
-    getCoreInformationById,
+    getCoreUsersById,
     createCore,
     createInvitationToCore,
     decodeInvitationToCore,
     acceptInvitationToCore,
-    leaveCore
+    leaveCoreById
 }
