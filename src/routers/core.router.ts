@@ -1,23 +1,24 @@
 import express from 'express'
 import { requireAuth } from '../middlewares/auth.middleware.ts'
+import { isUserInCore } from '../middlewares/core.middleware.ts'
 import { CoreController } from '../controllers/index.ts'
 
 const router = express.Router()
 
 router.get('/', requireAuth, CoreController.getUserCores)
 
-router.get('/:id', requireAuth, CoreController.getUserCoreById)
+router.get('/:coreId', requireAuth, isUserInCore, CoreController.getUserCoreById)
 
-router.get('/:id/information', requireAuth, CoreController.getUserCoreInformationById)
+router.get('/:coreId/information', requireAuth, isUserInCore, CoreController.getUserCoreInformationById)
 
 router.post('/', requireAuth, CoreController.createCore)
 
-router.post('/:id/invitation', requireAuth, CoreController.createInvitationToCore)
+router.post('/:coreId/invitation', requireAuth, isUserInCore, CoreController.createInvitationToCore)
 
 router.get('/invitation/:token', requireAuth, CoreController.decodeInvitationToCore)
 
 router.post('/invitation/:token', requireAuth, CoreController.acceptInvitationToCore)
 
-router.delete('/:id/leave', requireAuth, CoreController.leaveCore)
+router.delete('/:coreId/leave', requireAuth, isUserInCore, CoreController.leaveCore)
 
 export default router

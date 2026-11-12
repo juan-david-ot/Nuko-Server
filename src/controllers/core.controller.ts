@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { coreSchema } from '../schemas/core.schema.ts'
 import { CoreModel, TaskListModel, UserModel } from '../models/index.ts'
-import coreService from '../services/core.service.ts'
 import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
 
@@ -20,22 +19,15 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
 }
 
 async function getUserCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+    const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
         return next(result.error)
     }
 
-    const { id: coreId } = result.data
+    const { coreId } = result.data
 
-    const coreQuery = CoreModel.getCore({ id: coreId })
-    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
-
-    if (!isUserInCore) {
-        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
-    }
-
-    const coreResponse = await coreQuery
+    const coreResponse = await CoreModel.getCore({ id: coreId })
 
     if (coreResponse.error) {
         return next(coreResponse.error)
@@ -49,21 +41,16 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
 }
 
 async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+    const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
         return next(result.error)
     }
 
-    const { id: coreId } = result.data
+    const { coreId } = result.data
 
     const coreQuery = CoreModel.getCore({ id: coreId })
     const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
-    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
-
-    if (!isUserInCore) {
-        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
-    }
 
     const coreResponse = await coreQuery
 
@@ -137,20 +124,14 @@ async function createCore(req: Request, res: Response, next: NextFunction): Prom
 }
 
 async function createInvitationToCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+    const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
         return next(result.error)
     }
 
-    const { id: coreId } = result.data
+    const { coreId } = result.data
     const { id: hostId } = req.payload
-
-    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
-
-    if (!isUserInCore) {
-        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
-    }
 
     const payload = { hostId, coreId }
 
@@ -247,22 +228,15 @@ async function acceptInvitationToCore(req: Request, res: Response, next: NextFun
 }
 
 async function leaveCore(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
-    const result = await z.object({ id: z.uuid() }).safeParseAsync(req.params)
+    const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
         return next(result.error)
     }
 
-    const { id: coreId } = result.data
+    const { coreId } = result.data
 
-    const coreUsersQuery = CoreModel.getUsersFromCore(coreId)
-    const isUserInCore = await coreService.isUserInCore(req.payload.id, coreId)
-
-    if (!isUserInCore) {
-        return next(new HttpError(401, 'No tienes acceso a este nucleo'))
-    }
-
-    const coreUsersResponse = await coreUsersQuery
+    const coreUsersResponse = await CoreModel.getUsersFromCore(coreId)
 
     if (coreUsersResponse.error) {
         return next(coreUsersResponse.error)
