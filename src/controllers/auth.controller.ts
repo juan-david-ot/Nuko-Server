@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken'
 import z from 'zod'
 import { partialUserSchema, userSchema } from '../schemas/user.schema.ts'
 import { PasswordResetModel, UserModel } from '../models/index.ts'
+import authService from '../services/auth.service.ts'
 import emailService from '../services/email.service.ts'
 import { toCamelCase } from '../utils/index.ts'
 import { HttpError } from '../error-handler/http.error.ts'
@@ -29,8 +30,7 @@ async function signUp(req: Request, res: Response, next: NextFunction): Promise<
         return next(new HttpError(400, 'El nombre de usuario o el email ya existe'))
     }
 
-    const salt = bcrypt.genSalt(10)
-    const hashedPassword = bcrypt.hash(result.data.password, await salt)
+    const hashedPassword = authService.hashPassword(result.data.password)
     const newUser = { ...result.data, password: await hashedPassword }
 
     const newUserResponse = await UserModel.saveUser(newUser)
@@ -206,8 +206,7 @@ async function resetPassword(req: Request, res: Response, next: NextFunction): P
     }
 
     if (passwordResetResponse.data && userResponse.data && passwordResetResponse.data.expires_at && passwordResetResponse.data.expires_at?.getTime() > Date.now()) {
-        const salt = bcrypt.genSalt(10)
-        const hashedPassword = bcrypt.hash(newPassword, await salt)
+        const hashedPassword = authService.hashPassword(newPassword)
         const updateUserResponse = await UserModel.updateUser({ id: userResponse.data.id, password: await hashedPassword, passwordChangedAt: new Date() })
 
         if (updateUserResponse.error) {
@@ -277,8 +276,7 @@ async function changePassword(req: Request, res: Response, next: NextFunction): 
     }
 
     if (userResponse.data && (await bcrypt.compare(password, userResponse.data.password))) {
-        const salt = bcrypt.genSalt(10)
-        const hashedPassword = bcrypt.hash(newPassword, await salt)
+        const hashedPassword = authService.hashPassword(newPassword)
         const updateUserResponse = await UserModel.updateUser({ id: userResponse.data.id, password: await hashedPassword, passwordChangedAt: new Date() })
 
         if (updateUserResponse.error) {
