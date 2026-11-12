@@ -7,4 +7,6 @@ const router = express.Router()
 
 router.get('/cores/:coreId', requireAuth, isUserInCore, TaskListController.getTaskListsByCoreId)
 
+router.post('/cores/:coreId', requireAuth, isUserInCore, TaskListController.createTaskList)
+
 export default router
