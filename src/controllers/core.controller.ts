@@ -18,7 +18,7 @@ async function getUserCores(req: Request, res: Response, next: NextFunction): Pr
     return res.status(200).json(cores)
 }
 
-async function getUserCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+async function getCoreById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
@@ -40,7 +40,7 @@ async function getUserCoreById(req: Request, res: Response, next: NextFunction):
     return res.status(200).json({ ...toCamelCase(coreResponse.data) })
 }
 
-async function getUserCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+async function getCoreInformationById(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const result = await z.object({ coreId: z.uuid() }).safeParseAsync(req.params)
 
     if (result.error) {
@@ -286,8 +286,8 @@ async function leaveCore(req: Request, res: Response, next: NextFunction): Promi
 
 export {
     getUserCores,
-    getUserCoreById,
-    getUserCoreInformationById,
+    getCoreById,
+    getCoreInformationById,
     createCore,
     createInvitationToCore,
     decodeInvitationToCore,

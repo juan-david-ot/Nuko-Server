@@ -7,9 +7,9 @@ const router = express.Router()
 
 router.get('/', requireAuth, CoreController.getUserCores)
 
-router.get('/:coreId', requireAuth, isUserInCore, CoreController.getUserCoreById)
+router.get('/:coreId', requireAuth, isUserInCore, CoreController.getCoreById)
 
-router.get('/:coreId/information', requireAuth, isUserInCore, CoreController.getUserCoreInformationById)
+router.get('/:coreId/information', requireAuth, isUserInCore, CoreController.getCoreInformationById)
 
 router.post('/', requireAuth, CoreController.createCore)
 
